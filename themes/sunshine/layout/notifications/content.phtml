@@ -1,0 +1,29 @@
+<div class="page-margin">
+	<div class="row">
+		<div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+		<div class="col-md-7 profile-lists middlecol">
+			<div class="page-margin wow_content mt-0">
+				<div class="wo_page_hdng pag_neg_padd pag_alone">
+					<div class="wo_page_hdng_innr big_size">
+						<?php echo !empty($wo['lang']['notifications']) ? $wo['lang']['notifications'] : 'Notifications'; ?>
+					</div>
+				</div>
+			</div>
+			<div class="wo_my_pages">
+				<div id="notification-page-list">
+					<?php
+					if (!empty($wo['notifications'])) {
+						foreach ($wo['notifications'] as $wo['notification']) {
+							echo Wo_LoadPage('header/notifecation');
+						}
+					} else {
+						echo '<div class="empty_state">' . $wo['lang']['no_new_notification'] . '</div>';
+					}
+					?>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3 rightcol"><?php echo Wo_LoadPage("sidebar/content");?></div>
+	</div>
+</div>

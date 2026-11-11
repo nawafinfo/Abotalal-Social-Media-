@@ -10,6 +10,21 @@ if (!empty($_GET['url'])) {
 ?>
 <form action="#" method="post" class="post publisher-box" id="publisher-box-focus">
 	<div class="panel panel-white post panel-shadow">
+		<div class="fb-composer-head">
+			<button type="button" class="fb-composer-back" onclick="$('#focus-overlay').trigger('click'); return false;" aria-label="back">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+			</button>
+			<span class="fb-composer-title"><?php echo $wo['lang']['post_label']; ?></span>
+			<button type="button" class="fb-composer-topshare" onclick="document.getElementById('publisher-button').click(); return false;"><?php echo $wo['lang']['share']; ?></button>
+		</div>
+		<div class="fb-composer-user">
+			<?php if ($wo['page'] != 'events') { ?>
+			<img class="fb-composer-ava" src="<?php echo (empty($wo['page_profile']['avatar'])) ? $wo['user']['avatar'] : $wo['page_profile']['avatar'];?>" alt="">
+			<?php } ?>
+			<div class="fb-composer-meta">
+				<b><?php echo !empty($wo['page_profile']['page_name']) ? $wo['page_profile']['page_name'] : $wo['user']['name']; ?></b>
+			</div>
+		</div>
 		<div id="post-textarea" onclick="Wo_ShowPosInfo();">
 			<div class="wo_pub_txtara_combo">
 				<?php if ($wo['page'] != 'events') { ?>
@@ -36,7 +51,8 @@ if (!empty($_GET['url'])) {
 				<div class="poster-left-buttons camera-button" onclick="Wo_ShowPosInfo();">
 					<div class="input-group">
 						<span class="btn btn-default btn-file" id="camera-button-btn" onclick="document.getElementById('publisher-photos').click(); return false">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera" color="#5b5b5b"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#45BD62" d="M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z" /></svg>
+							<span class="fb-collapsed-photo"><?php echo $wo['lang']['photos']; ?></span>
 						</span>
 					</div>
 				</div>
@@ -216,11 +232,12 @@ if (!empty($_GET['url'])) {
 			<?php } ?>
 			
 			<!--Uploaded Image-->
-			<div class="<?php echo Wo_RightToLeft('pull-left');?>">
+			<div class="<?php echo Wo_RightToLeft('pull-left');?> fb-pub-action fb-pub-row">
 				<div class="poster-left-buttons">
 					<div class="input-group">
 						<span class="btn btn-file">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#4db3f6" d="M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z" /></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#45BD62" d="M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z" /></svg>
+							<span class="fb-pub-label"><?php echo $wo['lang']['photos']; ?></span>
 							<input type="file" id="publisher-photos" accept="image/x-png, image/gif, image/jpeg" name="postPhotos[]" multiple="multiple">
 						</span>
 					</div>
@@ -229,11 +246,12 @@ if (!empty($_GET['url'])) {
 
 			<!--Uploaded Video-->
 			<?php if ($wo['config']['video_upload'] == 1) { ?>
-			<div class="<?php echo Wo_RightToLeft('pull-left');?>">
+			<div class="<?php echo Wo_RightToLeft('pull-left');?> fb-pub-action fb-pub-row">
 				<div class="poster-left-buttons">
 					<div class="input-group">
 						<span class="btn btn-file">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 512 512"><path fill="#71a257" d="M450.6 153.6c-3.3 0-6.5.9-9.3 2.7l-86.5 54.6c-2.5 1.6-4 4.3-4 7.2v76c0 2.9 1.5 5.6 4 7.2l86.5 54.6c2.8 1.7 6 2.7 9.3 2.7h20.8c4.8 0 8.6-3.8 8.6-8.5v-188c0-4.7-3.9-8.5-8.6-8.5h-20.8zM273.5 384h-190C55.2 384 32 360.8 32 332.6V179.4c0-28.3 23.2-51.4 51.4-51.4h190c28.3 0 51.4 23.2 51.4 51.4v153.1c.1 28.3-23 51.5-51.3 51.5z"/></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 512 512"><path fill="#F3425F" d="M450.6 153.6c-3.3 0-6.5.9-9.3 2.7l-86.5 54.6c-2.5 1.6-4 4.3-4 7.2v76c0 2.9 1.5 5.6 4 7.2l86.5 54.6c2.8 1.7 6 2.7 9.3 2.7h20.8c4.8 0 8.6-3.8 8.6-8.5v-188c0-4.7-3.9-8.5-8.6-8.5h-20.8zM273.5 384h-190C55.2 384 32 360.8 32 332.6V179.4c0-28.3 23.2-51.4 51.4-51.4h190c28.3 0 51.4 23.2 51.4 51.4v153.1c.1 28.3-23 51.5-51.3 51.5z"/></svg>
+							<span class="fb-pub-label"><?php echo $wo['lang']['videos']; ?></span>
 							<input type="file" id="publisher-video" name="postVideo" accept="video/*">
 						</span>
 					</div>
@@ -269,11 +287,12 @@ if (!empty($_GET['url'])) {
 			<?php } ?>
          
 			<!--Add Feeling-->
-			<div class="<?php echo Wo_RightToLeft('pull-left');?> emo-form" >
+			<div class="<?php echo Wo_RightToLeft('pull-left');?> emo-form fb-pub-action fb-pub-row" >
 				<div class="poster-left-buttons">
 					<div class="input-group">
 						<span class="btn btn-file">
-							<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24"><path fill="#f3c038" d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10c5.514,0,10-4.486,10-10S17.514,2,12,2z M8.5,8C9.328,8,10,8.896,10,10	s-0.672,2-1.5,2S7,11.104,7,10S7.672,8,8.5,8z M12,18c-1.905,0-3.654-0.874-4.8-2.399l1.599-1.201C9.563,15.417,10.73,16,12,16	c1.27,0,2.436-0.583,3.2-1.601l1.6,1.201C15.653,17.126,13.904,18,12,18z M15.5,12c-0.828,0-1.5-0.896-1.5-2s0.672-2,1.5-2	S17,8.896,17,10S16.328,12,15.5,12z" /></svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24"><path fill="#F7B928" d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10c5.514,0,10-4.486,10-10S17.514,2,12,2z M8.5,8C9.328,8,10,8.896,10,10	s-0.672,2-1.5,2S7,11.104,7,10S7.672,8,8.5,8z M12,18c-1.905,0-3.654-0.874-4.8-2.399l1.599-1.201C9.563,15.417,10.73,16,12,16	c1.27,0,2.436-0.583,3.2-1.601l1.6,1.201C15.653,17.126,13.904,18,12,18z M15.5,12c-0.828,0-1.5-0.896-1.5-2s0.672-2,1.5-2	S17,8.896,17,10S16.328,12,15.5,12z" /></svg>
+							<span class="fb-pub-label"><?php echo $wo['lang']['feeling']; ?></span>
 						</span>
 					</div>
 				</div>
@@ -318,11 +337,12 @@ if (!empty($_GET['url'])) {
 			</div>
 		 
 			<!--Add Location-->
-			<div class="<?php echo Wo_RightToLeft('pull-left');?>">
+			<div class="<?php echo Wo_RightToLeft('pull-left');?> fb-pub-row">
 				<div class="poster-left-buttons">
 					<div class="input-group">
 						<span class="btn btn-file map-form">
 							<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24"><path fill="#f35369" d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z" /></svg>
+							<span class="fb-pub-label"><?php echo $wo['lang']['location']; ?></span>
 						</span>
 					</div>
 				</div>
@@ -832,6 +852,8 @@ $(function () {
 
   $('form.post').ajaxForm({
     url: Wo_Ajax_Requests_File() + '?f=posts&s=insert_new_post',
+    dataType: 'json',
+    headers: {'X-Requested-With': 'XMLHttpRequest'},
     beforeSend: function () {
       var percentVal = '0%';
       bar.width(percentVal);
@@ -846,12 +868,21 @@ $(function () {
       $('#progress').slideDown(200);
       percent.html(percentVal);
     },beforeSubmit: function (a,b,c) {
-    	for (var i = 0 ;i < a.length ; i++) {
-    		if (a[i].name == 'postPhotos[]') {
-    			for (var b = 0 ;b < deleted_images.length ; b++) {
-    				if (a[i].value.name == deleted_images[b]) {
-    					a[i] = {name:'',value:''};
+    	for (var i = a.length - 1; i >= 0; i--) {
+    		var field_name = a[i].name;
+    		var field_val = a[i].value;
+    		if (field_name == 'postPhotos[]' || field_name == 'postVideo' || field_name == 'postFile' || field_name == 'postMusic' || field_name == 'video_thumb') {
+    			var empty_file = !field_val || (typeof field_val === 'object' && !field_val.name);
+    			var deleted_photo = false;
+    			if (field_name == 'postPhotos[]' && field_val && field_val.name) {
+    				for (var d = 0; d < deleted_images.length; d++) {
+    					if (field_val.name == deleted_images[d]) {
+    						deleted_photo = true;
+    					}
     				}
+    			}
+    			if (empty_file || deleted_photo) {
+    				a.splice(i, 1);
     			}
     		}
     	}
@@ -859,6 +890,9 @@ $(function () {
     	
     },
     success: function (data) {
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch (e) { data = {}; }
+      }
       $('#post_color_input').val("");
       $('.all_colors').hide();
 	  $('.wo_pub_txtara_combo').css("cssText", "");
@@ -873,11 +907,11 @@ $(function () {
       $("#postSticker").val('');
       if(data.status == 200) {
       	$('#user_post_count').text(data.post_count);
-
-        if(data.html.length > 0) {
+        var post_html = data.html || '';
+        if(post_html.length > 0) {
           $('#posts, #posts_hashtag').find('.posts-container').remove();
         }
-        $('#posts, #posts_hashtag').prepend(data.html);
+        $('#posts, #posts_hashtag').prepend(post_html);
         $('#video-form, #emo-form, #music-form, #map-form, #file-form, #photo-form, #album-form, .feeling-type, #poll-form, #gif-form').slideUp(200);
         $(".video-poster-image").hide(10, function() {
           $(this).find('.preview').show(10);
@@ -954,6 +988,13 @@ $(function () {
       fetch_url = 1;
       $('#publisher-box-focus .pub-footer-bottom').find('.ball-pulse').fadeOut(100);
 	  $('#publisher-button').removeClass('btn-loading');
+      publisher_button.attr('disabled', false);
+    },
+    error: function () {
+      publisher_button.attr('disabled', false);
+      $('#publisher-button').removeClass('btn-loading');
+      $('#publisher-box-focus .pub-footer-bottom').find('.ball-pulse').fadeOut(100);
+      $('#progress').slideUp(200);
     }
   });
 

@@ -142,12 +142,18 @@ $(function() {
         	window.location.href = data.location;
         }, 1000);
       } else {
-        var errors = data.errors.join("<br>");
+        var errors = (data && data.errors) ? data.errors.join("<br>") : 'Login failed';
 		$this.find('button').attr("disabled", false);
 		$this.find('.add_wow_loader').removeClass('btn-loading');
         $state.html(errors);
       } 
       working = false;
+    },
+    error: function() {
+      working = false;
+      $this.find('button').attr("disabled", false);
+      $this.find('.add_wow_loader').removeClass('btn-loading');
+      $state.html('Login request failed. Please try again.');
     }
   });
 });

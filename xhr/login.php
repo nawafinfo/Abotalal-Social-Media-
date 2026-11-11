@@ -61,11 +61,12 @@ if ($f == 'login') {
             $update              = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `ip_address` = '{$ip}' WHERE `user_id` = '{$userid}'");
             $session             = Wo_CreateLoginSession(Wo_UserIdForLogin($username));
             $_SESSION['user_id'] = $session;
-            setcookie("user_id", $session, time() + (10 * 365 * 24 * 60 * 60));
+            $cookie_secure = (strpos($wo['config']['site_url'], 'https://') === 0);
+            setcookie("user_id", $session, time() + (10 * 365 * 24 * 60 * 60), '/', '', $cookie_secure, true);
             setcookie('ad-con', htmlentities(json_encode(array(
                 'date' => date('Y-m-d'),
                 'ads' => array()
-            ))), time() + (10 * 365 * 24 * 60 * 60));
+            ))), time() + (10 * 365 * 24 * 60 * 60), '/', '', $cookie_secure, false);
             $data = array(
                 'status' => 200
             );

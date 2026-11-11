@@ -967,7 +967,7 @@ if ($wo['loggedin'] && $IsOwnerUser) {
 			</div>
 			<div class="modal-body">
 				<div id="image-to-crop" class="wo_crop_img_pic">
-					<img src="<?php echo Wo_GetMedia($wo['user_profile']['avatar_full'])?>" alt="avatar" data-image="<?php echo $wo['user_profile']['avatar_full']; ?>" >
+					<img src="<?php echo Wo_GetMedia(!empty($wo['user_profile']['avatar_full']) ? $wo['user_profile']['avatar_full'] : $wo['user_profile']['avatar']); ?>" alt="avatar" data-image="<?php echo !empty($wo['user_profile']['avatar_full']) ? $wo['user_profile']['avatar_full'] : $wo['user_profile']['avatar']; ?>" >
 				</div>
 			</div>
 			<div class="modal-footer">

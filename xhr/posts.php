@@ -1,9 +1,9 @@
-<?php 
+<?php
 if ($f == 'posts') {
     if ($s == 'fetch_url') {
         if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $_POST["url"], $match)) {
             $youtube_video = Wo_Secure($match[1]);
-            $api_request   = file_get_contents('https://www.googleapis.com/youtube/v3/videos?id=' . $youtube_video . '&key=AIzaSyDoOC41IwRzX5XvP7bNiCJXJfcK14HalM0&part=snippet,contentDetails,statistics,status');
+            $api_request   = file_get_contents('https://www.googleapis.com/youtube/v3/videos?id=' . $youtube_video . '&key=' . $wo['config']['youtube_api_key'] . '&part=snippet,contentDetails,statistics,status');
             $thumbnail     = '';
             if (!empty($api_request)) {
                 $json_decode = json_decode($api_request);
@@ -37,47 +37,127 @@ if ($f == 'posts') {
                 echo json_encode($output);
                 exit();
             }
+        } elseif (preg_match("/(http|https):\/\/twitter\.com\/[a-zA-Z0-9_]+\/status\/[0-9]+/", $_POST['url'])) {
+            $tweet_url   = Wo_Secure($_POST['url']);
+            $tweeturl    = 'https://publish.twitter.com/oembed?url=' . $tweet_url;
+            $api_request = @file_get_contents($tweeturl);
+            $thumbnail   = '';
+            if (!empty($api_request)) {
+                $json_decode = json_decode($api_request);
+                $title       = $json_decode->author_name;
+                $description = $json_decode->html;
+                $output      = array(
+                    'title' => $title,
+                    'images' => array(
+                        $thumbnail
+                    ),
+                    'content' => $description,
+                    'url' => $_POST["url"],
+                    'tweet' => 'yes'
+                );
+                echo json_encode($output);
+                exit();
+            }
+        } elseif (preg_match("/(http|https):\/\/www.tiktok\.com\/(.*)\/video\/(.*)+/", $_POST['url'])) {
+            $tiktok_url  = Wo_Secure($_POST['url']);
+            $tiktok_url  = 'https://www.tiktok.com/oembed?url=' . $tiktok_url;
+            $api_request = @file_get_contents($tiktok_url);
+            $thumbnail   = '';
+            if (!empty($api_request)) {
+                $json_decode = json_decode($api_request);
+                $title       = $json_decode->author_name;
+                $description = $json_decode->html;
+                $output      = array(
+                    'title' => $title,
+                    'images' => array(
+                        $thumbnail
+                    ),
+                    'content' => $description,
+                    'url' => $_POST["url"],
+                    'tweet' => 'yes'
+                );
+                echo json_encode($output);
+                exit();
+            }
+        } elseif (preg_match("/^(http:\/\/|https:\/\/|www\.).*(\.mp4)$/", $_POST['url'])) {
+            $thumbnail      = '';
+            $title          = '';
+            $description    = '';
+            $wo['media']    = array(
+                'storyId' => 0,
+                'filename' => $_POST["url"],
+                'video_thumb' => ''
+            );
+            $wo['wo_ad_id'] = '';
+            $wo['rvad_con'] = '';
+            $description    = Wo_LoadPage('players/fetched_video');
+            $output         = array(
+                'title' => $title,
+                'images' => array(
+                    $thumbnail
+                ),
+                'content' => $description,
+                'url' => $_POST["url"],
+                'mp4' => 'yes'
+            );
+            echo json_encode($output);
+            exit();
+        } elseif (preg_match('~facebook.com\/(.*)\/(?:t\.\d+/)?(\d+)~i', $_POST['url']) || preg_match('~fb.watch\/(.*)~', $_POST['url']) || preg_match('~(?:https://www.facebook.com\/watch\/\?v=)(.*)~', $_POST['url']) || preg_match('~(?:https://www.facebook.com\/watch\?v=)(.*)~', $_POST['url'])) {
+            $output = array(
+                'title' => '',
+                'images' => array(),
+                'content' => '',
+                'url' => $_POST["url"],
+                'facebook' => 'yes'
+            );
+            echo json_encode($output);
+            exit();
         } else if (isset($_POST["url"])) {
             $page_title = '';
             $image_urls = array();
             $page_body  = '';
             $get_url    = $_POST["url"];
-            include_once("assets/libraries/simple_html_dom.inc.php");
-            $get_image = getimagesize($get_url);
-            if (!empty($get_image)) {
-                $image_urls[] = $get_url;
-                $page_title   = 'Image';
-            } else {
-                $get_content = file_get_html($get_url);
-                foreach ($get_content->find('title') as $element) {
-                    @$page_title = $element->plaintext;
-                }
-                if (empty($page_title)) {
-                    $page_title = '';
-                }
-                @$page_body = $get_content->find("meta[name='description']", 0)->content;
-                $page_body = mb_substr($page_body, 0, 250, "utf-8");
-                if ($page_body === false) {
-                    $page_body = '';
-                }
-                if (empty($page_body)) {
-                    @$page_body = $get_content->find("meta[property='og:description']", 0)->content;
+            $save       = IsSaveUrl($_POST["url"]);
+            if ($save['status'] == 200) {
+                if ($save['type'] == 'image') {
+                    $get_image = getimagesize($get_url);
+                    if (!empty($get_image)) {
+                        $image_urls[] = $get_url;
+                        $page_title   = 'Image';
+                    }
+                } elseif ($save['type'] == 'html') {
+                    include_once("assets/libraries/simple_html_dom.inc.php");
+                    $get_content = file_get_html($get_url);
+                    foreach ($get_content->find('title') as $element) {
+                        @$page_title = $element->plaintext;
+                    }
+                    if (empty($page_title)) {
+                        $page_title = '';
+                    }
+                    @$page_body = $get_content->find("meta[name='description']", 0)->content;
                     $page_body = mb_substr($page_body, 0, 250, "utf-8");
                     if ($page_body === false) {
                         $page_body = '';
                     }
-                }
-                $image_urls = array();
-                @$page_image = $get_content->find("meta[property='og:image']", 0)->content;
-                if (!empty($page_image)) {
-                    if (preg_match('/[\w\-]+\.(jpg|png|gif|jpeg)/', $page_image)) {
-                        $image_urls[] = $page_image;
+                    if (empty($page_body)) {
+                        @$page_body = $get_content->find("meta[property='og:description']", 0)->content;
+                        $page_body = mb_substr($page_body, 0, 250, "utf-8");
+                        if ($page_body === false) {
+                            $page_body = '';
+                        }
                     }
-                } else {
-                    foreach ($get_content->find('img') as $element) {
-                        if (!preg_match('/blank.(.*)/i', $element->src)) {
-                            if (preg_match('/[\w\-]+\.(jpg|png|gif|jpeg)/', $element->src)) {
-                                $image_urls[] = $element->src;
+                    $image_urls = array();
+                    @$page_image = $get_content->find("meta[property='og:image']", 0)->content;
+                    if (!empty($page_image)) {
+                        if (preg_match('/[\w\-]+\.(jpg|png|gif|jpeg)/', $page_image)) {
+                            $image_urls[] = $page_image;
+                        }
+                    } else {
+                        foreach ($get_content->find('img') as $element) {
+                            if (!preg_match('/blank.(.*)/i', $element->src)) {
+                                if (preg_match('/[\w\-]+\.(jpg|png|gif|jpeg)/', $element->src)) {
+                                    $image_urls[] = $element->src;
+                                }
                             }
                         }
                     }
@@ -128,36 +208,59 @@ if ($f == 'posts') {
         exit();
     }
     if ($s == 'insert_new_post') {
-        $media         = '';
-        $mediaFilename = '';
-        $post_photo    = '';
-        $mediaName     = '';
-        $video_thumb   = '';
-        $html          = '';
-        $recipient_id  = 0;
-        $page_id       = 0;
-        $group_id      = 0;
-        $event_id      = 0;
-        $invalid_file  = false;
-        $errors        = false;
-        $image_array   = array();
-        $blur          = 0;
-        if (Wo_CheckSession($hash_id) === false) {
-            return false;
-            die();
+        $media                = '';
+        $mediaFilename        = '';
+        $post_photo           = '';
+        $mediaName            = '';
+        $video_thumb          = '';
+        $html                 = '';
+        $recipient_id         = 0;
+        $page_id              = 0;
+        $group_id             = 0;
+        $event_id             = 0;
+        $invalid_file         = false;
+        $errors               = false;
+        $ffmpeg_convert_video = '';
+        $image_array          = array();
+        $blur                 = 0;
+        $post_privacy         = 0;
+        $wo['add_watermark']  = true;
+        $videoTitle           = null;
+        $is_reel              = 0;
+        $wo['removeFromLocal'] = 0;
+        if (function_exists('wo_clear_empty_uploads')) {
+            wo_clear_empty_uploads();
         }
-        if ($wo['config']['who_upload'] == 'pro' && $wo['user']['is_pro'] == 0 && !Wo_IsAdmin() && (!empty($_FILES['postFile']) || !empty($_FILES['postVideo']) || !empty($_FILES['postMusic']) || !empty($_FILES['postPhotos']) || !empty($_POST['postRecord']))) {
+        if (!isset($_POST['postRecord'])) {
+            $_POST['postRecord'] = '';
+        }
 
+        if (Wo_CheckSession($hash_id) === false) {
             header("Content-type: application/json");
             echo json_encode(array(
                 'status' => 400,
-                'errors' => $errors,
-                'invalid_file' => 4
+                'errors' => $wo['lang']['please_check_details']
             ));
             exit();
         }
-
-
+        if ($wo['config']['who_upload'] == 'pro' && $wo['user']['is_pro'] == 0 && !Wo_IsAdmin() && (!empty($_FILES['postFile']) || !empty($_FILES['postVideo']) || !empty($_FILES['postMusic']) || !empty($_FILES['postPhotos']) || !empty($_POST['postRecord']))) {
+            $errors = $wo['lang']['please_upgrade_to_upload'];
+            header("Content-type: application/json");
+            echo json_encode(array(
+                'status' => 400,
+                'errors' => $errors
+            ));
+            exit();
+        }
+        if (!Wo_CheckIfUserCanPost($wo['config']['post_limit'])) {
+            $errors = $wo['lang']['limit_exceeded'];
+            header("Content-type: application/json");
+            echo json_encode(array(
+                'status' => 400,
+                'errors' => $errors
+            ));
+            exit();
+        }
         if (isset($_POST['recipient_id']) && !empty($_POST['recipient_id'])) {
             $recipient_id = Wo_Secure($_POST['recipient_id']);
         } else if (isset($_POST['event_id']) && !empty($_POST['event_id'])) {
@@ -175,11 +278,29 @@ if ($f == 'posts') {
                 }
             }
         }
+
+        if (isset($_POST['videoTitle']) && !empty($_POST['videoTitle'])) {
+            $videoTitle = Wo_Secure($_POST['videoTitle']);
+        }
         if (isset($_FILES['postFile']['name'])) {
             if ($_FILES['postFile']['size'] > $wo['config']['maxUpload']) {
-                $invalid_file = 1;
+                $errors = str_replace('{file_size}', Wo_SizeUnits($wo['config']['maxUpload']), $wo['lang']['file_too_big']);
+                header("Content-type: application/json");
+                echo json_encode(array(
+                    'status' => 400,
+                    'errors' => $errors,
+                    'invalid_file' => $invalid_file
+                ));
+                exit();
             } else if (Wo_IsFileAllowed($_FILES['postFile']['name']) == false) {
-                $invalid_file = 2;
+                $errors = $wo['lang']['file_not_supported'];
+                header("Content-type: application/json");
+                echo json_encode(array(
+                    'status' => 400,
+                    'errors' => $errors,
+                    'invalid_file' => $invalid_file
+                ));
+                exit();
             } else {
                 $fileInfo = array(
                     'file' => $_FILES["postFile"]["tmp_name"],
@@ -192,26 +313,75 @@ if ($f == 'posts') {
                     $mediaFilename = $media['filename'];
                     $mediaName     = $media['name'];
                 }
+                else{
+                    $errors = $wo['lang']['file_not_supported'];
+                    header("Content-type: application/json");
+                    echo json_encode(array(
+                        'status' => 400,
+                        'errors' => $errors,
+                        'invalid_file' => $invalid_file
+                    ));
+                    exit();
+                }
             }
         }
-        if (isset($_FILES['postVideo']['name']) && empty($mediaFilename)) {
+        $not_video = true;
+        if (isset($_FILES['postVideo']['name']) && empty($mediaFilename) && !empty($_FILES['postVideo']['tmp_name'])) {
+            $mimeType = function_exists('mime_content_type') ? @mime_content_type($_FILES['postVideo']['tmp_name']) : '';
+            $fileType = (!empty($mimeType) && strpos($mimeType, '/') !== false) ? explode('/', $mimeType)[0] : '';
+            if ($fileType === 'video' && Wo_IsFfmpegFileAllowed($_FILES['postVideo']['name']) && !Wo_IsVideoNotAllowedMime($_FILES["postVideo"]["type"])) {
+                $not_video = false;
+            }
             if ($_FILES['postVideo']['size'] > $wo['config']['maxUpload']) {
-                $invalid_file = 1;
-            } else if (Wo_IsFileAllowed($_FILES['postVideo']['name']) == false) {
-                $invalid_file = 2;
-            } else {
+                $errors = str_replace('{file_size}', Wo_SizeUnits($wo['config']['maxUpload']), $wo['lang']['file_too_big']);
+            } else if (Wo_IsFileAllowed($_FILES['postVideo']['name']) == false && $wo['config']['ffmpeg_system'] != 'on') {
+                $errors = $wo['lang']['file_not_supported'];
+            } elseif ($wo['config']['ffmpeg_system'] == 'on' && $not_video) {
+                $errors = $wo['lang']['file_not_supported'];
+            }
+            else {
                 $fileInfo = array(
                     'file' => $_FILES["postVideo"]["tmp_name"],
                     'name' => $_FILES['postVideo']['name'],
                     'size' => $_FILES["postVideo"]["size"],
-                    'type' => $_FILES["postVideo"]["type"],
-                    'types' => 'mp4,m4v,webm,flv,mov,mpeg'
+                    'type' => $_FILES["postVideo"]["type"]
                 );
-                $media    = Wo_ShareFile($fileInfo);
+                if ($wo['config']['ffmpeg_system'] != 'on') {
+                    $fileInfo['types'] = 'mp4,m4v,webm,flv,mov,mpeg,mkv';
+                }
+                if ($wo['config']['ffmpeg_system'] == 'on') {
+                    if ($not_video == false) {
+                        $fileInfo['is_video'] = 1;
+                    }
+                    $amazone_s3                   = $wo['config']['amazone_s3'];
+                    $wasabi_storage                   = $wo['config']['wasabi_storage'];
+                    $backblaze_storage                   = $wo['config']['backblaze_storage'];
+                    $ftp_upload                   = $wo['config']['ftp_upload'];
+                    $spaces                       = $wo['config']['spaces'];
+                    $cloud_upload                 = $wo['config']['cloud_upload'];
+                    $wo['config']['amazone_s3']   = 0;
+                    $wo['config']['wasabi_storage']   = 0;
+                    $wo['config']['backblaze_storage']   = 0;
+                    $wo['config']['ftp_upload']   = 0;
+                    $wo['config']['spaces']       = 0;
+                    $wo['config']['cloud_upload'] = 0;
+                }
+                $media = Wo_ShareFile($fileInfo);
+                if ($wo['config']['ffmpeg_system'] == 'on') {
+                    $wo['config']['amazone_s3']   = $amazone_s3;
+                    $wo['config']['wasabi_storage']   = $wasabi_storage;
+                    $wo['config']['backblaze_storage']   = $backblaze_storage;
+                    $wo['config']['ftp_upload']   = $ftp_upload;
+                    $wo['config']['spaces']       = $spaces;
+                    $wo['config']['cloud_upload'] = $cloud_upload;
+                }
                 if (!empty($media)) {
                     $mediaFilename = $media['filename'];
                     $mediaName     = $media['name'];
-                    $img_types     = array(
+                    if (!empty($mediaFilename) && $wo['config']['ffmpeg_system'] == 'on') {
+                        $ffmpeg_convert_video = $mediaFilename;
+                    }
+                    $img_types = array(
                         'image/png',
                         'image/jpeg',
                         'image/jpg',
@@ -229,19 +399,36 @@ if ($f == 'posts') {
                                 'height' => 295
                             )
                         );
+                        if (!empty($_POST['postPrivacy']) && $_POST['postPrivacy'] == 6) {
+                            $wo['removeFromLocal'] = 1;
+                        }
                         $media    = Wo_ShareFile($fileInfo);
                         if (!empty($media)) {
+                            $wo['filesToRemove'] = [$media['filename']];
                             $video_thumb = $media['filename'];
                         }
                     }
                 }
+                else{
+                    $errors = $wo['lang']['file_not_supported'];
+                    header("Content-type: application/json");
+                    echo json_encode(array(
+                        'status' => 400,
+                        'errors' => $errors,
+                        'invalid_file' => $invalid_file
+                    ));
+                    exit();
+                }
+            }
+            if(isset($_POST['reels'])) {
+                $is_reel = 1;
             }
         }
         if (isset($_FILES['postMusic']['name']) && empty($mediaFilename)) {
             if ($_FILES['postMusic']['size'] > $wo['config']['maxUpload']) {
-                $invalid_file = 1;
+                $errors = str_replace('{file_size}', Wo_SizeUnits($wo['config']['maxUpload']), $wo['lang']['file_too_big']);
             } else if (Wo_IsFileAllowed($_FILES['postMusic']['name']) == false) {
-                $invalid_file = 2;
+                $errors = $wo['lang']['file_not_supported'];
             } else {
                 $fileInfo = array(
                     'file' => $_FILES["postMusic"]["tmp_name"],
@@ -258,40 +445,46 @@ if ($f == 'posts') {
             }
         }
         $multi = 0;
+        $wo['filesToRemove'] = [];
         if (isset($_FILES['postPhotos']['name']) && empty($mediaFilename) && empty($_POST['album_name'])) {
             if (count($_FILES['postPhotos']['name']) == 1) {
                 if ($_FILES['postPhotos']['size'][0] > $wo['config']['maxUpload']) {
-                    $invalid_file = 1;
+                    $errors = str_replace('{file_size}', Wo_SizeUnits($wo['config']['maxUpload']), $wo['lang']['file_too_big']);
                 } else if (Wo_IsFileAllowed($_FILES['postPhotos']['name'][0]) == false) {
-                    $invalid_file = 2;
+                    $errors = $wo['lang']['file_not_supported'];
                 } else {
-                    
-                        $fileInfo = array(
-                            'file' => $_FILES["postPhotos"]["tmp_name"][0],
-                            'name' => $_FILES['postPhotos']['name'][0],
-                            'size' => $_FILES["postPhotos"]["size"][0],
-                            'type' => $_FILES["postPhotos"]["type"][0]
-                        );
-                        $media    = Wo_ShareFile($fileInfo);
-                        if (!empty($media)) {
-                            $image_file = Wo_GetMedia($media['filename']);
-                            $upload = true;
-                            if ($wo['config']['adult_images'] == 1  && !detect_safe_search($image_file) && $wo['config']['adult_images_action'] == 1) {
-                                $blur = 1;
-                            }
-                            elseif ($wo['config']['adult_images'] == 1  && detect_safe_search($image_file) == false && $wo['config']['adult_images_action'] == 0) {
-                                $invalid_file = 3;
-                                $upload = false;
-                                @unlink($media['filename']);
-                                Wo_DeleteFromToS3($media['filename']);
-                            }
-                            $mediaFilename = $media['filename'];
-                            $mediaName     = $media['name'];
+                    $fileInfo = array(
+                        'file' => $_FILES["postPhotos"]["tmp_name"][0],
+                        'name' => $_FILES['postPhotos']['name'][0],
+                        'size' => $_FILES["postPhotos"]["size"][0],
+                        'type' => $_FILES["postPhotos"]["type"][0]
+                    );
+                    if (!empty($_POST['postPrivacy']) && $_POST['postPrivacy'] == 6) {
+                        $wo['removeFromLocal'] = 1;
+                    }
+                    $media    = Wo_ShareFile($fileInfo, 1);
+                    if (!empty($media)) {
+                        $wo['filesToRemove'][] = $media['filename'];
+                        $image_file = Wo_GetMedia($media['filename']);
+                        $upload     = true;
+                        if ($wo['config']['adult_images'] == 1 && !detect_safe_search($image_file) && $wo['config']['adult_images_action'] == 1) {
+                            $blur = 1;
+                        } elseif ($wo['config']['adult_images'] == 1 && detect_safe_search($image_file) == false && $wo['config']['adult_images_action'] == 0) {
+                            $errors = $wo['lang']['adult_image_file'];
+                            $upload       = false;
+                            @unlink($media['filename']);
+                            Wo_DeleteFromToS3($media['filename']);
                         }
+                        $mediaFilename = $media['filename'];
+                        $mediaName     = $media['name'];
+                    }
                 }
             } else {
                 $multi = 1;
             }
+        }
+        if (!empty($_FILES['postPhotos']) && !empty($_FILES['postMusic'])) {
+            $multi = 1;
         }
         if (empty($_POST['postPrivacy'])) {
             $_POST['postPrivacy'] = 0;
@@ -302,8 +495,12 @@ if ($f == 'posts') {
             '1',
             '2',
             '3',
-            '4'
+            '4',
+            '6'
         );
+        if ($wo['config']['website_mode'] == 'patreon' || $wo['config']['website_mode'] == 'linkedin') {
+            $privacy_array[] = '5';
+        }
         if (isset($_POST['postPrivacy'])) {
             if (in_array($_POST['postPrivacy'], $privacy_array)) {
                 $post_privacy = $_POST['postPrivacy'];
@@ -312,6 +509,11 @@ if ($f == 'posts') {
         if ($wo['config']['shout_box_system'] != 1 && $post_privacy == 4) {
             $post_privacy = 0;
         }
+
+        if ($wo['config']['monetization'] != 1 && $post_privacy == 6) {
+            $post_privacy = 0;
+        }
+
         if (empty($page_id)) {
             setcookie("post_privacy", $post_privacy, time() + (10 * 365 * 24 * 60 * 60));
         }
@@ -327,6 +529,31 @@ if ($f == 'posts') {
             }
             if (!empty($_POST['url_image'])) {
                 $import_url_image = @Wo_ImportImageFromUrl($_POST['url_image']);
+            }
+            if (preg_match("/(http|https):\/\/twitter\.com\/[a-zA-Z0-9_]+\/status\/[0-9]+/", $_POST['url_link'])) {
+                $url_content      = '';
+                $import_url_image = '';
+                $url_title        = '';
+                $tweet_url        = Wo_Secure($_POST['url_link']);
+                $tweeturl         = 'https://publish.twitter.com/oembed?url=' . $tweet_url;
+                $api_request      = @file_get_contents($tweeturl);
+                if (!empty($api_request)) {
+                    $json_decode = json_decode($api_request);
+                    $url_title   = $json_decode->author_name;
+                    $url_content = $json_decode->html;
+                }
+            } elseif (preg_match("/(http|https):\/\/www.tiktok\.com\/(.*)\/video\/(.*)+/", $_POST['url_link'])) {
+                $tiktok_url       = Wo_Secure($_POST['url_link']);
+                $tiktok_url       = 'https://www.tiktok.com/oembed?url=' . $tiktok_url;
+                $api_request      = @file_get_contents($tiktok_url);
+                $url_content      = '';
+                $import_url_image = '';
+                $url_title        = '';
+                if (!empty($api_request)) {
+                    $json_decode = json_decode($api_request);
+                    $url_title   = $json_decode->author_name;
+                    $url_content = $json_decode->html;
+                }
             }
         }
         $post_text = '';
@@ -383,7 +610,7 @@ if ($f == 'posts') {
                 }
             }
         }
-        if (isset($_FILES['postPhotos']['name'])) {
+        if (isset($_FILES['postPhotos']['name']) && is_array($_FILES['postPhotos']['name'])) {
             $allowed = array(
                 'gif',
                 'png',
@@ -391,11 +618,14 @@ if ($f == 'posts') {
                 'jpeg'
             );
             for ($i = 0; $i < count($_FILES['postPhotos']['name']); $i++) {
-                $new_string = pathinfo($_FILES['postPhotos']['name'][$i]);
-                if (!in_array(strtolower($new_string['extension']), $allowed)) {
-                    $errors[] = $error_icon . $wo['lang']['please_check_details'];
+                if (empty($_FILES['postPhotos']['name'][$i])) {
+                    continue;
                 }
-                
+                $new_string = pathinfo($_FILES['postPhotos']['name'][$i]);
+                $ext = isset($new_string['extension']) ? strtolower($new_string['extension']) : '';
+                if (!in_array($ext, $allowed)) {
+                    $errors = $wo['lang']['file_not_supported'];
+                }
             }
         }
         if (!empty($_POST['answer']) && array_filter($_POST['answer'])) {
@@ -418,23 +648,25 @@ if ($f == 'posts') {
             if ($wo['config']['post_approval'] == 1 && !Wo_IsAdmin()) {
                 $post_active = 0;
             }
-            $post_data = array(
-                'user_id' => Wo_Secure($wo['user']['user_id']),
+
+            $post_data                = array(
+                 'user_id' => Wo_Secure($wo['user']['user_id']),
                 'page_id' => Wo_Secure($page_id),
                 'group_id' => Wo_Secure($group_id),
                 'event_id' => Wo_Secure($event_id),
-                'postText' => Wo_Secure($post_text),
+                'postText' => Wo_Secure($post_text,1),
                 'recipient_id' => Wo_Secure($recipient_id),
                 'postRecord' => Wo_Secure($_POST['postRecord']),
                 'postFile' => Wo_Secure($mediaFilename, 0),
-                'postFileName' => Wo_Secure($mediaName),
+                'postFileName' => Wo_Secure($mediaName,1),
                 'postMap' => Wo_Secure($post_map),
                 'postPrivacy' => Wo_Secure($post_privacy),
-                'postLinkTitle' => Wo_Secure($url_title),
+                'postLinkTitle' => Wo_Secure($url_title,1),
+                'videoTitle' => Wo_Secure($videoTitle === null ? '' : $videoTitle,1),
                 'postLinkContent' => Wo_Secure($url_content),
                 'postLink' => Wo_Secure($url_link),
                 'postLinkImage' => Wo_Secure($import_url_image, 0),
-                'album_name' => Wo_Secure($album_name),
+                'album_name' => Wo_Secure($album_name,1),
                 'multi_image' => Wo_Secure($multi),
                 'postFeeling' => Wo_Secure($feeling),
                 'postListening' => Wo_Secure($listening),
@@ -447,8 +679,42 @@ if ($f == 'posts') {
                 'multi_image_post' => 0,
                 'active' => $post_active
             );
+            if ($is_reel == 1) {
+                $post_data['is_reel'] = 1;
+            }
+            
+            if ($post_privacy == 6) {
+                $post_data['blur_url'] = $wo["userDefaultBlur"];
+            }
+
+            $post_data['ai_post'] = 0;
+            if (($wo['config']['ai_post_system'] == 1 || $wo['config']['ai_image_system'] == 1) && !empty($_POST['ai_post']) && $_POST['ai_post'] == 'on') {
+                $post_data['ai_post'] = 1;
+            }
+            $post_data['send_notify'] = '';
+            if ($wo['config']['notify_new_post'] == 1) {
+                if (!empty($wo['story']) && empty($wo['story']['page_id']) && empty($wo['story']['group_id']) && empty($wo['story']['event_id']) && $wo['story']['postPrivacy'] < 3) {
+                    $post_data['send_notify'] = time();
+                }
+            }
             if (isset($_POST['postSticker']) && Wo_IsUrl($_POST['postSticker']) && empty($_FILES) && empty($_POST['postRecord'])) {
-                $post_data['postSticker'] = $_POST['postSticker'];
+                $_POST['postSticker'] = preg_replace('/on[^<>=]+=[^<>]*/m', '', $_POST['postSticker']);
+                $_POST['postSticker'] = preg_replace('/\((.*?)\)/m', '', $_POST['postSticker']);
+                $_POST['postSticker'] = strip_tags($_POST['postSticker']);
+                $re  = '/(http|https):\/\/(.*)\.giphy\.com\/media\/(.*)\/(.*)\.gif\?(.*)/';
+                $str = $_POST['postSticker'];
+                preg_match($re, $str, $matches, PREG_OFFSET_CAPTURE, 0);
+                if (!empty($matches) && !empty($matches[2]) && !empty($matches[2][0]) && !empty($matches[3]) && !empty($matches[3][0]) && !empty($matches[4]) && !empty($matches[4][0])) {
+                    $_POST['postSticker'] = "https://" . $matches[2][0] . ".giphy.com/media/" . $matches[3][0] . "/" . $matches[4][0] . ".gif";
+                    $headers              = get_headers($_POST['postSticker'], 1);
+                    if (strpos($headers['Content-Type'], 'image/') !== false) {
+                        $post_data['postSticker'] = $_POST['postSticker'];
+                    } else {
+                        $errors = $wo['lang']['file_not_supported'];
+                    }
+                } else {
+                    $errors = $wo['lang']['file_not_supported'];
+                }
             } else if (empty($_FILES['postPhotos']) && preg_match_all('/https?:\/\/(?:[^\s]+)\.(?:png|jpg|gif|jpeg)/', $post_data['postText'], $matches)) {
                 if (!empty($matches[0][0]) && Wo_IsUrl($matches[0][0])) {
                     $post_data['postPhoto'] = @Wo_ImportImageFromUrl($matches[0][0]);
@@ -460,91 +726,55 @@ if ($f == 'posts') {
             if (!empty($_POST['post_color']) && !empty($post_text) && empty($_POST['postRecord']) && empty($mediaFilename) && empty($mediaName) && empty($post_map) && empty($url_title) && empty($url_content) && empty($url_link) && empty($import_url_image) && empty($album_name) && empty($multi) && empty($video_thumb) && empty($post_data['postPhoto'])) {
                 $post_data['color_id'] = Wo_Secure($_POST['post_color']);
             }
-            $id = Wo_RegisterPost($post_data);
-            if ($id) {
-                Wo_CleanCache();
-                Wo_UpdateUserDetails($wo['user'], true, false, false, true);
-                if ($is_option == true) {
-                    foreach ($_POST['answer'] as $key => $value) {
-                        $add_opition = Wo_AddOption($id, $value);
+            if (!empty($ffmpeg_convert_video)) {
+                $ffmpeg_b             = $wo['config']['ffmpeg_binary_file'];
+                $video_file_full_path = dirname(__DIR__) . '/' . $ffmpeg_convert_video;
+                $video_info           = shell_exec("$ffmpeg_b -i " . $video_file_full_path . " 2>&1");
+                $re                   = '/[0-9]{3}+x[0-9]{3}/m';
+                preg_match_all($re, $video_info, $min_str);
+                $resolution = 0;
+                if (!empty($min_str) && !empty($min_str[0]) && !empty($min_str[0][0])) {
+                    $substr = substr($video_info, strpos($video_info, $min_str[0][0]) - 3, 15);
+                    $re     = '/[0-9]+x[0-9]+/m';
+                    preg_match_all($re, $substr, $resolutions);
+                    if (!empty($resolutions) && !empty($resolutions[0]) && !empty($resolutions[0][0])) {
+                        $resolution = substr($resolutions[0][0], 0, strpos($resolutions[0][0], 'x'));
                     }
                 }
-                if (isset($_FILES['postPhotos']['name'])) {
-                    if (count($_FILES['postPhotos']['name']) > 0) {
-                        for ($i = 0; $i < count($_FILES['postPhotos']['name']); $i++) {
-                            $fileInfo = array(
-                                'file' => $_FILES["postPhotos"]["tmp_name"][$i],
-                                'name' => $_FILES['postPhotos']['name'][$i],
-                                'size' => $_FILES["postPhotos"]["size"][$i],
-                                'type' => $_FILES["postPhotos"]["type"][$i],
-                                'types' => 'jpg,png,jpeg,gif'
-                            );
-                            $file     = Wo_ShareFile($fileInfo, 1);
-                            $image_file = Wo_GetMedia($file['filename']);
-                            if ($wo['config']['adult_images'] == 1  && !detect_safe_search($image_file) && $wo['config']['adult_images_action'] == 1) {
-                                $blur = 1;
-                            }
-                            elseif ($wo['config']['adult_images'] == 1 && detect_safe_search($image_file) == false && $wo['config']['adult_images_action'] == 0) {
-                                $invalid_file = 3;
-                                $errors[] = $error_icon . $wo['lang']['adult_image_file'];
-                                Wo_DeletePost($id);
-                                @unlink($file['filename']);
-                                Wo_DeleteFromToS3($file['filename']);
-                            }
-                            if (!empty($file)) {
-                                $media_album = Wo_RegisterAlbumMedia($id, $file['filename']);
-                                $post_data['multi_image'] = 0;
-                                $post_data['multi_image_post'] = 1;
-                                $post_data['album_name'] = '';
-                                $post_data['postFile'] = $file['filename'];
-                                $post_data['postFileName'] = $file['name'];
-                                $post_data['active'] = $post_active;
-                                $new_id = Wo_RegisterPost($post_data);
-                                $media_album = Wo_RegisterAlbumMedia($new_id, $file['filename'],$id);
-                            }
-                        }
-                    }
-                }
-                if ($wo['config']['post_approval'] == 1 && !Wo_IsAdmin()) {
-                    $data = array(
-                        'status' => 200,
-                        'invalid_file' => 4,
-                        'html' => '',
-                    );
-                }
-                else{
-                    $wo['story'] = Wo_PostData($id);
-                    $html .= Wo_LoadPage('story/content');
-                    $data = array(
-                        'status' => 200,
-                        'html' => $html,
-                        'invalid_file' => $invalid_file,
-                        'post_count' => (!empty($wo['story']['publisher']['details']) ? $wo['story']['publisher']['details']['post_count'] : 0)
-                    );
-                    Wo_RunInBackground($data);
-                    if ($wo['config']['notify_new_post'] == 1) {
-                        if (empty($wo['story']['page_id']) && empty($wo['story']['group_id']) && empty($wo['story']['event_id']) && $wo['story']['postPrivacy'] < 3) {
-                            $post_id = $wo['story']['id'];
-                            $users = Wo_GetFollowNotifyUsers($wo['user']['user_id']);
-                            if (!empty($users)) {
-                                foreach ($users as $key => $value) {
-                                    $notification_data_array = array(
-                                        'recipient_id' => $value,
-                                        'type' => 'new_post',
-                                        'post_id' => $post_id,
-                                        'url' => 'index.php?link1=post&id=' . $post_id
-                                    );
-                                    Wo_RegisterNotification($notification_data_array);
-                                }
-                            }
-                        }
-                    }
-                } 
-            } else {
-                $data = array(
-                    'status' => 400,
-                    'invalid_file' => $invalid_file
+                $ret = array(
+                    'status' => 300
                 );
+                if ($resolution >= 640 || $resolution == 0) {
+                    $ret = array(
+                        'status' => 300,
+                        'update' => '1'
+                    );
+                }
+                ob_end_clean();
+                header("Content-Encoding: none");
+                header("Connection: close");
+                ignore_user_abort();
+                ob_start();
+                header('Content-Type: application/json');
+                echo json_encode($ret);
+                $size = ob_get_length();
+                header("Content-Length: $size");
+                ob_end_flush();
+                flush();
+                session_write_close();
+                if (is_callable('fastcgi_finish_request')) {
+                    fastcgi_finish_request();
+                }
+                if (is_callable('litespeed_finish_request')) {
+                    litespeed_finish_request();
+                }
+                $id = FFMPEGUpload(array(
+                    'filename' => $ffmpeg_convert_video,
+                    'video_thumb' => $video_thumb,
+                    'post_data' => $post_data
+                ));
+            } else {
+                $id = Wo_RegisterPost($post_data);
             }
         } else {
             header("Content-type: application/json");
@@ -555,32 +785,291 @@ if ($f == 'posts') {
             ));
             exit();
         }
+            if (!empty($id)) {
+            if ($is_reel == 1) {
+                try {
+                    $db->where('name','have_reels')->update(T_CONFIG,['value' => 1]);
+                } catch (Exception $e) {}
+            }
+            Wo_CleanCache();
+            Wo_UpdateUserDetails($wo['user'], true, false, false, true);
+            if ($is_option == true) {
+                foreach ($_POST['answer'] as $key => $value) {
+                    $add_opition = Wo_AddOption($id, $value);
+                }
+            }
+            if (isset($_FILES['postPhotos']['name'])) {
+                if (count($_FILES['postPhotos']['name']) > 0) {
+                    for ($i = 0; $i < count($_FILES['postPhotos']['name']); $i++) {
+                        $fileInfo   = array(
+                            'file' => $_FILES["postPhotos"]["tmp_name"][$i],
+                            'name' => $_FILES['postPhotos']['name'][$i],
+                            'size' => $_FILES["postPhotos"]["size"][$i],
+                            'type' => $_FILES["postPhotos"]["type"][$i],
+                            'types' => 'jpg,png,jpeg,gif'
+                        );
+                        $file       = Wo_ShareFile($fileInfo, 1);
+                        $image_file = Wo_GetMedia($file['filename']);
+                        if ($wo['config']['adult_images'] == 1 && !detect_safe_search($image_file) && $wo['config']['adult_images_action'] == 1) {
+                            $blur = 1;
+                        } elseif ($wo['config']['adult_images'] == 1 && detect_safe_search($image_file) == false && $wo['config']['adult_images_action'] == 0) {
+                            $errors = $wo['lang']['adult_image_file'];
+                            $errors     = $wo['lang']['adult_image_file'];
+                            Wo_DeletePost($id);
+                            @unlink($file['filename']);
+                            Wo_DeleteFromToS3($file['filename']);
+                            header("Content-type: application/json");
+                            echo json_encode(array(
+                                'status' => 400,
+                                'errors' => $errors,
+                                'invalid_file' => $invalid_file
+                            ));
+                            exit();
+                        }
+                        if (!empty($file)) {
+                            $media_album                   = Wo_RegisterAlbumMedia($id, $file['filename']);
+                            $post_data['multi_image']      = 0;
+                            $post_data['multi_image_post'] = 1;
+                            $post_data['album_name']       = '';
+                            $post_data['postFile']         = $file['filename'];
+                            $post_data['postFileName']     = $file['name'];
+                            $post_data['active']           = $post_active;
+                            $new_id                        = Wo_RegisterPost($post_data);
+                            $media_album                   = Wo_RegisterAlbumMedia($new_id, $file['filename'], $id);
+                        }
+                    }
+                }
+            }
+            if ($wo['config']['post_approval'] == 1 && !Wo_IsAdmin()) {
+                $data = array(
+                    'status' => 200,
+                    'invalid_file' => 4,
+                    'html' => ''
+                );
+
+                ob_end_clean();
+                header("Content-Encoding: none");
+                header("Connection: close");
+                ignore_user_abort();
+                ob_start();
+                header('Content-Type: application/json');
+                echo json_encode($data);
+                $size = ob_get_length();
+                header("Content-Length: $size");
+                ob_end_flush();
+                flush();
+                session_write_close();
+                if (is_callable('fastcgi_finish_request')) {
+                    fastcgi_finish_request();
+                }
+                if (is_callable('litespeed_finish_request')) {
+                    litespeed_finish_request();
+                }
+
+                if ($post_privacy == 6) {
+                    $blur_url = $wo["userDefaultBlur"];
+                    try {
+                        if($video_thumb) {
+                            $blur_url = blur_image($video_thumb);
+                        }
+                        if($mediaFilename && $not_video) {
+                            $blur_url = blur_image($mediaFilename);
+                        }
+                    } catch (Exception $e) {}
+                        
+                    $db->where('post_id',$id)->update(T_POSTS,['blur_url' => $blur_url]);
+                }
+            } else {
+                $wo['story'] = Wo_PostData($id);
+                if (empty($wo['story']) || !is_array($wo['story'])) {
+                    $wo['story'] = array('id' => $id, 'is_reel' => 0, 'publisher' => array(), 'page_id' => 0, 'group_id' => 0, 'event_id' => 0, 'postPrivacy' => 0);
+                }
+                if (empty($wo['story']['is_reel'])) {
+                    $wo['story']['is_reel'] = 0;
+                }
+                if (!empty($wo['story']['id'])) {
+                    $html .= Wo_LoadPage('story/content');
+                }
+                $data          = array(
+                    'status' => 200,
+                    'html' => $wo['story']['is_reel'] == 0  ? $html : "",
+                    'invalid_file' => $invalid_file,
+                    'post_count' => (!empty($wo['story']['publisher']['details']) ? $wo['story']['publisher']['details']['post_count'] : 0),
+                    'mention' => array(),
+                    'redirect_to' => $wo['story']['is_reel'] == 1 ?  'lightbox' : ""
+                );
+                $mention_regex = '/@([A-Za-z0-9_]+)/i';
+                preg_match_all($mention_regex, isset($_POST['postText']) ? $_POST['postText'] : '', $matches);
+                foreach ($matches[1] as $match) {
+                    $match      = Wo_Secure($match);
+                    $match_user = Wo_UserData(Wo_UserIdFromUsername($match));
+                    if (isset($match_user['user_id'])) {
+                        $data['mention'][] = $match_user['user_id'];
+                    }
+                }
+                $data['send_notify'] = 'no';
+                $data['post_id']     = $wo['story']['id'];
+                if ($wo['config']['notify_new_post'] == 1) {
+                    if (empty($wo['story']['page_id']) && empty($wo['story']['group_id']) && empty($wo['story']['event_id']) && $wo['story']['postPrivacy'] < 3) {
+                        $data['send_notify'] = 'yes';
+                    }
+                }
+                ob_end_clean();
+                header("Content-Encoding: none");
+                header("Connection: close");
+                ignore_user_abort();
+                ob_start();
+                header('Content-Type: application/json');
+                echo json_encode($data);
+                $size = ob_get_length();
+                header("Content-Length: $size");
+                ob_end_flush();
+                flush();
+                session_write_close();
+                if (is_callable('fastcgi_finish_request')) {
+                    fastcgi_finish_request();
+                }
+                if (is_callable('litespeed_finish_request')) {
+                    litespeed_finish_request();
+                }
+                if ($post_privacy == 6) {
+                    $blur_url = $wo["userDefaultBlur"];
+                    try {
+                        if($video_thumb) {
+                            $blur_url = blur_image($video_thumb);
+                        }
+                        if($mediaFilename && $not_video) {
+                            $blur_url = blur_image($mediaFilename);
+                        }
+                    } catch (Exception $e) {}
+                    $db->where('post_id',$id)->update(T_POSTS,['blur_url' => $blur_url]);
+                }
+                if ($wo['config']['notify_new_post'] == 1) {
+                    if (empty($wo['story']['page_id']) && empty($wo['story']['group_id']) && empty($wo['story']['event_id']) && $wo['story']['postPrivacy'] < 3) {
+                        $post_id = $wo['story']['id'];
+                        $users   = Wo_GetFollowNotifyUsers($wo['user']['user_id']);
+                        if (!empty($users)) {
+                            foreach ($users as $key => $value) {
+                                $notification_data_array = array(
+                                    'recipient_id' => $value,
+                                    'type' => 'new_post',
+                                    'post_id' => $post_id,
+                                    'url' => 'index.php?link1=post&id=' . $post_id
+                                );
+                                Wo_RegisterNotification($notification_data_array);
+                            }
+                        }
+                    }
+                }
+                exit();
+            }
+        } else {
+            if (empty($errors)) {
+                $errors = str_replace('&#039;', "'", $wo['lang']['type_something_to_post']);
+            }
+            $data = array(
+                'status' => 400,
+                'invalid_file' => $invalid_file,
+                'errors' => $errors,
+            );
+            if ($wo['config']['website_mode'] == 'askfm') {
+                if (empty($_POST['postText'])) {
+                    $errors       = $wo['lang']['question_can_not_empty'];
+                    $invalid_file = false;
+                }
+                header("Content-type: application/json");
+                echo json_encode(array(
+                    'status' => 400,
+                    'errors' => $errors,
+                    'invalid_file' => $invalid_file
+                ));
+                exit();
+            }
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+        exit();
+    }
+    if ($s == 'send_notify' && Wo_CheckMainSession($hash_id) === true) {
+        if (!empty($_POST['post_id']) && is_numeric($_POST['post_id']) && $_POST['post_id'] > 0) {
+            ob_end_clean();
+            header("Content-Encoding: none");
+            header("Connection: close");
+            ignore_user_abort();
+            ob_start();
+            header('Content-Type: application/json');
+            echo json_encode(array(
+                'status' => 200
+            ));
+            $size = ob_get_length();
+            header("Content-Length: $size");
+            ob_end_flush();
+            flush();
+            session_write_close();
+            if (is_callable('fastcgi_finish_request')) {
+                fastcgi_finish_request();
+            }
+            if (is_callable('litespeed_finish_request')) {
+                litespeed_finish_request();
+            }
+            $wo['story'] = $db->where('id', Wo_Secure($_POST['post_id']))->where('user_id', $wo['user']['id'])->getOne(T_POSTS);
+            if ($wo['config']['notify_new_post'] == 1 && !empty($wo['story']->send_notify)) {
+                if (empty($wo['story']->page_id) && empty($wo['story']->group_id) && empty($wo['story']->event_id) && $wo['story']->postPrivacy < 3) {
+                    $post_id = $wo['story']->id;
+                    $db->where('id', $post_id)->update(T_POSTS, array(
+                        'send_notify' => ''
+                    ));
+                    $users = Wo_GetFollowNotifyUsers($wo['user']['user_id']);
+                    if (!empty($users)) {
+                        foreach ($users as $key => $value) {
+                            $notification_data_array = array(
+                                'recipient_id' => $value,
+                                'type' => 'new_post',
+                                'post_id' => $post_id,
+                                'url' => 'index.php?link1=post&id=' . $post_id
+                            );
+                            Wo_RegisterNotification($notification_data_array);
+                        }
+                    }
+                }
+            }
+        }
+        $data = array(
+            'status' => 200
+        );
         header("Content-type: application/json");
         echo json_encode($data);
         exit();
     }
     if ($s == 'delete_post' && Wo_CheckMainSession($hash_id) === true) {
         if (!empty($_GET['post_id'])) {
-            //Wo_RunInBackground(array('status' => 200));
-            $wo['story'] = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_POSTS);
-            $post_id = Wo_Secure($_GET['post_id']);
-            $post = $db->where('id',$post_id)->getOne(T_POSTS);
-            if (Wo_DeletePost($_GET['post_id']) === true) {
-                if (!empty($post)) {
-                    $text = $post->postText;
+            $wo['story'] = $db->where('id', Wo_Secure($_GET['post_id']))->ArrayBuilder()->getOne(T_POSTS);
+            $deleted = false;
+            if (!empty($wo['story']['blog_id']) && $wo['story']['blog_id'] > 0) {
+                if (Wo_DeleteMyBlog($wo['story']['blog_id'])) {
+                    $deleted = true;
+                }
+            }else if (Wo_DeletePost($_GET['post_id']) === true) {
+                $deleted = true;
+            }
+            if ($deleted == true) {
+                if (!empty($wo['story'])) {
+                    $text          = $wo['story']['postText'];
                     $hashtag_regex = '/(#\[([0-9]+)\])/i';
                     preg_match_all($hashtag_regex, $text, $matches);
                     $match_i = 0;
                     foreach ($matches[1] as $match) {
-                        $hashkey  = $matches[2][$match_i];
+                        $hashkey = $matches[2][$match_i];
                         if (!empty($hashkey)) {
-                            $db->where('id',$hashkey)->update(T_HASHTAGS,array('trend_use_num' => $db->dec(1)));
+                            $db->where('id', $hashkey)->update(T_HASHTAGS, array(
+                                'trend_use_num' => $db->dec(1)
+                            ));
                         }
                         $match_i++;
                     }
                 }
-                $wo['user_profile'] = Wo_UserData($wo['story']->user_id);
-                $user_data = Wo_UpdateUserDetails($wo['story']->user_id, true, false, true, true);
+                $wo['user_profile'] = Wo_UserData($wo['story']['user_id']);
+                $user_data          = Wo_UpdateUserDetails($wo['story']['user_id'], true, false, true, true);
                 Wo_CleanCache();
                 $data = array(
                     'status' => 200,
@@ -694,6 +1183,9 @@ if ($f == 'posts') {
                 'story_id' => $story_id,
                 'placement' => 'multi_image_post'
             );
+            if (!$wo['loggedin']) {
+                $postsData = array('filter_by' => 'all','publisher_id' => $user_id,'placement' => 'multi_image_post','after_post_id' => Wo_Secure($_GET['after_post_id']));
+            }
             $get_posts = Wo_GetPosts($postsData);
             $is_api    = false;
             if (!empty($_GET['is_api'])) {
@@ -720,40 +1212,179 @@ if ($f == 'posts') {
     }
     if ($s == 'edit_post') {
         $_POST['text'] = trim($_POST['text']);
-        if (!empty($_POST['post_id']) && !empty($_POST['text'])) {
-            $post_id = Wo_Secure($_POST['post_id']);
-            $post = $db->where('id',$post_id)->getOne(T_POSTS);
-            if (!empty($post)) {
+        if (!empty($_POST['post_id']) && is_numeric($_POST['post_id']) && (!empty($_POST['text']) || !empty($_FILES['images']))) {
+            $post_id    = Wo_Secure($_POST['post_id']);
+            $post       = $db->where('id', $post_id)->getOne(T_POSTS);
+            $updatePost = '';
+            if (!empty($post) && Wo_IsPostOnwer($post_id, $wo['user']['id'])) {
                 $wo['no_mention'] = array();
-                $mention_regex = '/@\[([0-9]+)\]/i';
+                $mention_regex    = '/@\[([0-9]+)\]/i';
                 preg_match_all($mention_regex, $post->postText, $matches);
                 foreach ($matches[1] as $match) {
                     if (!empty($match)) {
                         $wo['no_mention'][] = $match;
                     }
                 }
-            }
-            if ($wo['config']['maxCharacters'] > 0) {
-                if ((mb_strlen($_POST['text']) - 10) > $wo['config']['maxCharacters']) {
-                    header("Content-type: application/json");
-                    echo json_encode($data);
-                    exit();
+                if ($wo['config']['maxCharacters'] > 0) {
+                    if ((mb_strlen($_POST['text']) - 10) > $wo['config']['maxCharacters']) {
+                        header("Content-type: application/json");
+                        echo json_encode($data);
+                        exit();
+                    }
+                }
+                $updatePost = Wo_UpdatePost(array(
+                    'post_id' => $_POST['post_id'],
+                    'text' => $_POST['text']
+                ));
+                if (!empty($_POST['text'])) {
+                    $posts = $db->where('parent_id', $post_id)->get(T_ALBUMS_MEDIA);
+                    if (!empty($posts)) {
+                        foreach ($posts as $key => $value) {
+                            Wo_UpdatePost(array(
+                                'post_id' => $value->post_id,
+                                'text' => $_POST['text']
+                            ));
+                        }
+                    }
+                }
+                if (!empty($_POST['all_images']) && $_POST['all_images'] == 1) {
+                    $image_count_ = $db->where('post_id', $post_id)->getValue(T_ALBUMS_MEDIA, 'COUNT(*)');
+                    if ($image_count_ < 1 && !empty($post->postFile) && strpos($post->postFile, '_image') !== false) {
+                        $explode2 = @end(explode('.', $post->postFile));
+                        $explode3 = @explode('.', $post->postFile);
+                        $media_2  = $explode3[0] . '_small.' . $explode2;
+                        @unlink(trim($media_2));
+                        Wo_DeleteFromToS3($media_2);
+                        @unlink($post->postFile);
+                        Wo_DeleteFromToS3($post->postFile);
+                        $db->where('id', $post_id)->update(T_POSTS, array(
+                            'multi_image' => '0',
+                            'postFile' => '',
+                            'multi_image_post' => 0
+                        ));
+                    } elseif ($image_count_ > 0) {
+                        $query_two_2 = mysqli_query($sqlConnect, "SELECT * FROM " . T_ALBUMS_MEDIA . " WHERE `post_id` = '" . $post_id . "' ");
+                        while ($fetched_data_s = mysqli_fetch_assoc($query_two_2)) {
+                            $image_post = $db->where('parent_id', $post_id)->where('image', $fetched_data_s['image'])->get(T_ALBUMS_MEDIA);
+                            if (!empty($image_post)) {
+                                foreach ($image_post as $key => $value) {
+                                    Wo_DeletePost($value->post_id);
+                                }
+                            }
+                            $explode2 = @end(explode('.', $fetched_data_s['image']));
+                            $explode3 = @explode('.', $fetched_data_s['image']);
+                            $media_2  = $explode3[0] . '_small.' . $explode2;
+                            @unlink(trim($media_2));
+                            @unlink($fetched_data_s['image']);
+                            $delete_from_s3 = Wo_DeleteFromToS3($media_2);
+                            $delete_from_s3 = Wo_DeleteFromToS3($fetched_data_s['image']);
+                            mysqli_query($sqlConnect, "DELETE FROM " . T_ALBUMS_MEDIA . " WHERE `id` = '" . $fetched_data_s['id'] . "' ");
+                            $db->where('id', $post_id)->update(T_POSTS, array(
+                                'multi_image' => '0',
+                                'postFile' => '',
+                                'multi_image_post' => 0
+                            ));
+                        }
+                    }
+                    $post           = $db->where('id', $post_id)->getOne(T_POSTS);
+                    $data['reload'] = 'reload';
+                }
+                if (!empty($_FILES['images'])) {
+                    if (isset($_FILES['images']['name'])) {
+                        if (count($_FILES['images']['name']) > 0) {
+                            for ($i = 0; $i < count($_FILES['images']['name']); $i++) {
+                                $invalid_file = 0;
+                                $fileInfo     = array(
+                                    'file' => $_FILES["images"]["tmp_name"][$i],
+                                    'name' => $_FILES['images']['name'][$i],
+                                    'size' => $_FILES["images"]["size"][$i],
+                                    'type' => $_FILES["images"]["type"][$i],
+                                    'types' => 'jpg,png,jpeg,gif'
+                                );
+                                $file         = Wo_ShareFile($fileInfo, 1);
+                                $image_file   = Wo_GetMedia($file['filename']);
+                                if ($wo['config']['adult_images'] == 1 && !detect_safe_search($image_file) && $wo['config']['adult_images_action'] == 1) {
+                                    $blur = 1;
+                                } elseif ($wo['config']['adult_images'] == 1 && detect_safe_search($image_file) == false && $wo['config']['adult_images_action'] == 0) {
+                                    $invalid_file = 3;
+                                    $errors[]     = $error_icon . $wo['lang']['adult_image_file'];
+                                    Wo_DeletePost($post_id);
+                                    @unlink($file['filename']);
+                                    Wo_DeleteFromToS3($file['filename']);
+                                }
+                                if (!empty($file) && $invalid_file == 0) {
+                                    if (count($_FILES['images']['name']) == 1 && !empty($_POST['all_images']) && $_POST['all_images'] == 1) {
+                                        $db->where('id', $post_id)->update(T_POSTS, array(
+                                            'multi_image' => '0',
+                                            'postFile' => $file['filename'],
+                                            'postFileName' => $file['name'],
+                                            'multi_image_post' => 0
+                                        ));
+                                    } else {
+                                        $image_count = $db->where('post_id', $post_id)->getValue(T_ALBUMS_MEDIA, 'COUNT(*)');
+                                        if (!empty($post->postFile) && $image_count < 1) {
+                                            $post_data['multi_image']      = 0;
+                                            $post_data['multi_image_post'] = 1;
+                                            $post_data['album_name']       = '';
+                                            $post_data['postFile']         = $post->postFile;
+                                            $post_data['postFileName']     = $post->postFileName;
+                                            $post_data['active']           = 1;
+                                            $post_data['time']             = time();
+                                            $new_id                        = Wo_RegisterPost($post_data);
+                                            Wo_RegisterAlbumMedia($post_id, $post->postFile);
+                                            $db->where('id', $post_id)->update(T_POSTS, array(
+                                                'multi_image' => '1',
+                                                'postFile' => '',
+                                                'multi_image_post' => 0
+                                            ));
+                                            $post->postFile = '';
+                                        }
+                                        $post_data['multi_image']      = 0;
+                                        $post_data['multi_image_post'] = 1;
+                                        $post_data['album_name']       = '';
+                                        $post_data['postFile']         = $file['filename'];
+                                        $post_data['postFileName']     = $file['name'];
+                                        $post_data['active']           = 1;
+                                        $post_data['postPrivacy']      = 0;
+                                        $post_data['time']             = time();
+                                        $new_id                        = Wo_RegisterPost($post_data);
+                                        $media_album                   = Wo_RegisterAlbumMedia($post_id, $file['filename']);
+                                        $media_album                   = Wo_RegisterAlbumMedia($new_id, $file['filename'], $post_id);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $data = array(
+                        'status' => 200,
+                        'html' => '',
+                        'reload' => 'reload'
+                    );
+                } else {
+                    $image_count = $db->where('post_id', $post_id)->getValue(T_ALBUMS_MEDIA, 'COUNT(*)');
+                    if ($image_count == 1) {
+                        $image = $db->where('post_id', $post_id)->getOne(T_ALBUMS_MEDIA);
+                        $db->where('id', $post_id)->update(T_POSTS, array(
+                            'multi_image' => '0',
+                            'postFile' => $image->image,
+                            'postFileName' => '',
+                            'multi_image_post' => 0
+                        ));
+                    }
                 }
             }
-            $updatePost = Wo_UpdatePost(array(
-                'post_id' => $_POST['post_id'],
-                'text' => $_POST['text']
-            ));
             if (!empty($updatePost)) {
                 if (!empty($post)) {
-                    $text = $post->postText;
+                    $text          = $post->postText;
                     $hashtag_regex = '/(#\[([0-9]+)\])/i';
                     preg_match_all($hashtag_regex, $text, $matches);
                     $match_i = 0;
                     foreach ($matches[1] as $match) {
-                        $hashkey  = $matches[2][$match_i];
+                        $hashkey = $matches[2][$match_i];
                         if (!empty($hashkey)) {
-                            $db->where('id',$hashkey)->update(T_HASHTAGS,array('trend_use_num' => $db->dec(1)));
+                            $db->where('id', $hashkey)->update(T_HASHTAGS, array(
+                                'trend_use_num' => $db->dec(1)
+                            ));
                         }
                         $match_i++;
                     }
@@ -765,6 +1396,61 @@ if ($f == 'posts') {
                 );
                 if (Wo_CanSenEmails()) {
                     $data['can_send'] = 1;
+                }
+                if (!empty($_FILES['images'])) {
+                    $data['reload'] = 'reload';
+                }
+            }
+        } elseif (!empty($_POST['post_id']) && is_numeric($_POST['post_id'])) {
+            $post_id = Wo_Secure($_POST['post_id']);
+            $post    = $db->where('id', $post_id)->getOne(T_POSTS);
+            if (!empty($post) && Wo_IsPostOnwer($post_id, $wo['user']['id'])) {
+                $image_count = $db->where('post_id', $post_id)->getValue(T_ALBUMS_MEDIA, 'COUNT(*)');
+                if ($image_count == 1) {
+                    $image = $db->where('post_id', $post_id)->getOne(T_ALBUMS_MEDIA);
+                    $db->where('id', $post_id)->update(T_POSTS, array(
+                        'multi_image' => '0',
+                        'postFile' => $image->image,
+                        'postFileName' => '',
+                        'multi_image_post' => 0
+                    ));
+                    $data = array(
+                        'status' => 200,
+                        'html' => '',
+                        'reload' => 'reload'
+                    );
+                }
+            }
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+        exit();
+    }
+    if ($s == 'delete_post_image') {
+        if (!empty($_POST['post_id'])) {
+            $post_id     = Wo_Secure($_POST['post_id']);
+            $post        = $db->where('id', $post_id)->getOne(T_POSTS);
+            $image_count = $db->where('post_id', $post_id)->getValue(T_ALBUMS_MEDIA, 'COUNT(*)');
+            if (!empty($post) && Wo_IsPostOnwer($post_id, $wo['user']['id'])) {
+                if (!empty($_POST['image_id']) && is_numeric($_POST['image_id'])) {
+                    $image_id = Wo_Secure($_POST['image_id']);
+                    if ($image_count > 1) {
+                        $query_two_2 = mysqli_query($sqlConnect, "SELECT * FROM " . T_ALBUMS_MEDIA . " WHERE `id` = '" . $image_id . "' AND `post_id` = '" . $post_id . "' ");
+                        while ($fetched_data_s = mysqli_fetch_assoc($query_two_2)) {
+                            $image_post = $db->where('parent_id', $post_id)->where('image', $fetched_data_s['image'])->getOne(T_ALBUMS_MEDIA);
+                            if (!empty($image_post)) {
+                                Wo_DeletePost($image_post->post_id);
+                            }
+                            $explode2 = @end(explode('.', $fetched_data_s['image']));
+                            $explode3 = @explode('.', $fetched_data_s['image']);
+                            $media_2  = $explode3[0] . '_small.' . $explode2;
+                            @unlink(trim($media_2));
+                            @unlink($fetched_data_s['image']);
+                            $delete_from_s3 = Wo_DeleteFromToS3($media_2);
+                            $delete_from_s3 = Wo_DeleteFromToS3($fetched_data_s['image']);
+                            mysqli_query($sqlConnect, "DELETE FROM " . T_ALBUMS_MEDIA . " WHERE `id` = '" . $image_id . "' ");
+                        }
+                    }
                 }
             }
         }
@@ -982,6 +1668,9 @@ if ($f == 'posts') {
                     unset($_SESSION['file']);
                 }
             }
+            if (!empty($_POST['gif_url'])) {
+                $comment_image = Wo_ImportImageFromUrl($_POST['gif_url']);
+            }
             if (empty($comment_image) && empty($_POST['text']) && empty($_POST['audio-filename'])) {
                 header("Content-type: application/json");
                 echo json_encode($data);
@@ -995,7 +1684,7 @@ if ($f == 'posts') {
                 'user_id' => Wo_Secure($wo['user']['user_id']),
                 'page_id' => Wo_Secure($page_id),
                 'post_id' => Wo_Secure($_POST['post_id']),
-                'text' => Wo_Secure($_POST['text']),
+                'text' => Wo_Secure($_POST['text'],1),
                 'c_file' => Wo_Secure($comment_image),
                 'time' => time()
             );
@@ -1014,12 +1703,22 @@ if ($f == 'posts') {
             $wo['comment'] = Wo_GetPostComment($R_Comment);
             $wo['story']   = Wo_PostData($_POST['post_id']);
             if (!empty($wo['comment'])) {
-                $html = Wo_LoadPage('comment/content');
-                $data = array(
+                $html          = Wo_LoadPage('comment/content');
+                $data          = array(
                     'status' => 200,
                     'html' => $html,
-                    'comments_num' => Wo_CountPostComment($_POST['post_id'])
+                    'comments_num' => Wo_CountPostComment($_POST['post_id']),
+                    'mention' => array()
                 );
+                $mention_regex = '/@([A-Za-z0-9_]+)/i';
+                preg_match_all($mention_regex, $_POST['text'], $matches);
+                foreach ($matches[1] as $match) {
+                    $match      = Wo_Secure($match);
+                    $match_user = Wo_UserData(Wo_UserIdFromUsername($match));
+                    if (isset($match_user['user_id'])) {
+                        $data['mention'][] = $match_user['user_id'];
+                    }
+                }
                 if (Wo_CanSenEmails()) {
                     $data['can_send'] = 1;
                 }
@@ -1064,23 +1763,36 @@ if ($f == 'posts') {
                     unset($_SESSION['file']);
                 }
             }
+            if (!empty($_POST['gif_url'])) {
+                $comment_image = Wo_ImportImageFromUrl($_POST['gif_url']);
+            }
             $C_Data      = array(
                 'user_id' => Wo_Secure($wo['user']['user_id']),
                 'page_id' => Wo_Secure($page_id),
                 'comment_id' => Wo_Secure($_POST['comment_id']),
-                'text' => Wo_Secure($_POST['text']),
+                'text' => Wo_Secure($_POST['text'],1),
                 'c_file' => Wo_Secure($comment_image),
                 'time' => time()
             );
             $R_Comment   = Wo_RegisterCommentReply($C_Data);
             $wo['reply'] = Wo_GetCommentReply($R_Comment);
             if (!empty($wo['reply'])) {
-                $html = Wo_LoadPage('comment/replies-content');
-                $data = array(
+                $html          = Wo_LoadPage('comment/replies-content');
+                $data          = array(
                     'status' => 200,
                     'html' => $html,
-                    'replies_num' => Wo_CountCommentReplies($_POST['comment_id'])
+                    'replies_num' => Wo_CountCommentReplies($_POST['comment_id']),
+                    'mention' => array()
                 );
+                $mention_regex = '/@([A-Za-z0-9_]+)/i';
+                preg_match_all($mention_regex, $_POST['text'], $matches);
+                foreach ($matches[1] as $match) {
+                    $match      = Wo_Secure($match);
+                    $match_user = Wo_UserData(Wo_UserIdFromUsername($match));
+                    if (isset($match_user['user_id'])) {
+                        $data['mention'][] = $match_user['user_id'];
+                    }
+                }
                 if (Wo_CanSenEmails()) {
                     $data['can_send'] = 1;
                 }
@@ -1097,13 +1809,11 @@ if ($f == 'posts') {
                 'status' => 304
             );
             $update_datau = array(
-                'text' => Wo_Secure($_POST['text'])
+                'text' => Wo_Secure($_POST['text'],1)
             );
-
             if (Wo_UpdateCommentReply($id, $update_datau)) {
-
                 $reply = Wo_GetCommentReply($id);
-                $data = array(
+                $data  = array(
                     'status' => 200,
                     'text' => $reply['text'],
                     'orginal' => $reply['Orginaltext']
@@ -1153,11 +1863,11 @@ if ($f == 'posts') {
         if (!empty($_GET['post_id'])) {
             $html        = '';
             $wo['story'] = Wo_PostData($_GET['post_id']);
-            $offset = 0;
+            $offset      = 0;
             if (!empty($_GET['comment_id']) && is_numeric($_GET['comment_id']) && $_GET['comment_id'] > 0) {
                 $offset = Wo_Secure($_GET['comment_id']);
             }
-            $comments = Wo_GetPostComments($_GET['post_id'], 50,$offset);
+            $comments = Wo_GetPostComments($_GET['post_id'], 50, $offset);
             foreach ($comments as $wo['comment']) {
                 $html .= Wo_LoadPage('comment/content');
             }
@@ -1190,16 +1900,16 @@ if ($f == 'posts') {
         header("Content-type: application/json");
         echo json_encode($data);
         exit();
-    }if ($s == 'load_more_comments_sort') {
+    }
+    if ($s == 'load_more_comments_sort') {
         if (!empty($_GET['post_id'])) {
             $html        = '';
             $wo['story'] = Wo_PostData($_GET['post_id']);
             if (!empty($wo['story'])) {
-                foreach (Wo_GetPostCommentsSort($_GET['post_id'], Wo_CountPostComment($_GET['post_id']),$_GET['type']) as $wo['comment']) {
+                foreach (Wo_GetPostCommentsSort($_GET['post_id'], Wo_CountPostComment($_GET['post_id']), $_GET['type']) as $wo['comment']) {
                     $html .= Wo_LoadPage('comment/content');
                 }
             }
-                
             $data = array(
                 'status' => 200,
                 'html' => $html
@@ -1345,12 +2055,14 @@ if ($f == 'posts') {
             if (Wo_SavePosts($post_data) == 'unsaved') {
                 $data = array(
                     'status' => 300,
-                    'text' => $wo['lang']['save_post']
+                    'text' => $wo['lang']['save_post'],
+                    'des' => $wo['lang']['save_post_tx']
                 );
             } else {
                 $data = array(
                     'status' => 200,
-                    'text' => $wo['lang']['unsave_post']
+                    'text' => $wo['lang']['unsave_post'],
+                    'des' => $wo['lang']['unsave_post_tx']
                 );
             }
         }
@@ -1364,7 +2076,7 @@ if ($f == 'posts') {
             if (isset($_GET['type'])) {
                 $types_array = array(
                     '0',
-                    '1',
+                    '1'
                 );
                 if (in_array($_GET['type'], $types_array)) {
                     $type = $_GET['type'];
@@ -1372,13 +2084,17 @@ if ($f == 'posts') {
             }
             if (Wo_IsPostOnwer($_GET['post_id'], $wo['user']['user_id'])) {
                 if ($type == 0) {
-                    $db->where('id', Wo_Secure($_GET['post_id']))->update(T_POSTS, array('comments_status' => 1));
+                    $db->where('id', Wo_Secure($_GET['post_id']))->update(T_POSTS, array(
+                        'comments_status' => 1
+                    ));
                     $data = array(
                         'status' => 300,
                         'text' => $wo['lang']['disable_comments']
                     );
                 } else if ($type == 1) {
-                    $db->where('id', Wo_Secure($_GET['post_id']))->update(T_POSTS, array('comments_status' => 0));
+                    $db->where('id', Wo_Secure($_GET['post_id']))->update(T_POSTS, array(
+                        'comments_status' => 0
+                    ));
                     $data = array(
                         'status' => 200,
                         'text' => $wo['lang']['enable_comments']
@@ -1478,59 +2194,48 @@ if ($f == 'posts') {
     }
     if ($s == 'get_post_reacted') {
         if (!empty($_GET['post_id']) && !empty($_GET['col'])) {
-            $data         = array(
+            $data = array(
                 'status' => 200,
                 'html' => '',
                 'title' => $wo['lang']['users_reacted_post']
             );
-
             if (!empty($_GET['type']) && !empty($wo['reactions_types'][$_GET['type']]) && !empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) {
-                $reactedUsers = Wo_GetPostReactionUsers($_GET['post_id'], $_GET['type'] ,20,Wo_Secure($_GET['offset']),Wo_Secure($_GET['col']));
+                $reactedUsers = Wo_GetPostReactionUsers($_GET['post_id'], $_GET['type'], 20, Wo_Secure($_GET['offset']), Wo_Secure($_GET['col']));
+            } else {
+                $reactedUsers = Wo_GetPostReactionUsers($_GET['post_id'], $_GET['type'], 20, 0, Wo_Secure($_GET['col']));
             }
-            else{
-                $reactedUsers = Wo_GetPostReactionUsers($_GET['post_id'], $_GET['type'],20,0,Wo_Secure($_GET['col']));
-            }
-
             $post_info = array();
-
             if ($_GET['col'] == 'post') {
-                $post_info = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_POSTS);
-            }
-            elseif ($_GET['col'] == 'comment') {
-                $comment = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS);
+                $post_info = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_POSTS);
+            } elseif ($_GET['col'] == 'comment') {
+                $comment = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS);
                 if (!empty($comment->post_id)) {
-                    $post_info = $db->where('id',$comment->post_id)->getOne(T_POSTS);
+                    $post_info = $db->where('id', $comment->post_id)->getOne(T_POSTS);
                 }
-            }
-            elseif ($_GET['col'] == 'replay') {
-                $comment = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS_REPLIES);
+            } elseif ($_GET['col'] == 'replay') {
+                $comment = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS_REPLIES);
                 if (!empty($comment->comment_id)) {
-                    $comment = $db->where('id',$comment->comment_id)->getOne(T_COMMENTS);
+                    $comment = $db->where('id', $comment->comment_id)->getOne(T_COMMENTS);
                     if (!empty($comment->post_id)) {
-                        $post_info = $db->where('id',$comment->post_id)->getOne(T_POSTS);
+                        $post_info = $db->where('id', $comment->post_id)->getOne(T_POSTS);
                     }
                 }
             }
-            
-            
             if (count($reactedUsers) > 0) {
                 foreach ($reactedUsers as $wo['WondredLikedusers']) {
                     $wo['WondredLikedusers']['page_info'] = array();
                     if (!empty($post_info) && !empty($post_info->page_id)) {
                         $wo['WondredLikedusers']['page_info'] = Wo_PageData($post_info->page_id);
                     }
-                    
                     if (!empty($wo['WondredLikedusers']['page_info']) && !empty($post_info) && $post_info->page_id > 0 && $wo['WondredLikedusers']['page_info']['user_id'] == $wo['WondredLikedusers']['user_id']) {
                         $data['html'] .= Wo_LoadPage('story/page-post-likes');
-                    }
-                    else{
+                    } else {
                         $wo['WondredLikedusers']['anonymous'] = false;
                         if ($wo['config']['shout_box_system'] == 1 && !empty($post_info) && $post_info->postPrivacy == 4 && $wo['WondredLikedusers']['user_id'] == $post_info->user_id) {
                             $wo['WondredLikedusers']['anonymous'] = true;
                         }
                         $data['html'] .= Wo_LoadPage('story/post-likes-wonders');
                     }
-                    
                 }
             } else {
                 $data['message'] = $wo['lang']['no_reactions'];
@@ -1542,70 +2247,63 @@ if ($f == 'posts') {
     }
     if ($s == 'get_post_likes') {
         if (!empty($_GET['post_id']) && !empty($_GET['table'])) {
-            $data       = array(
+            $data = array(
                 'status' => 200,
                 'html' => '',
-                'title' => $wo['lang']['users_liked_post']
+                'title' => TextForMode('users_liked_post')
             );
             if ($_GET['table'] == 'post') {
                 if (!empty($_GET['type']) && $_GET['type'] == 'like' && !empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) {
-                    $likedUsers = Wo_GetPostLikes($_GET['post_id'],20,Wo_Secure($_GET['offset']));
-                }
-                else{
+                    $likedUsers = Wo_GetPostLikes($_GET['post_id'], 20, Wo_Secure($_GET['offset']));
+                } else {
                     $likedUsers = Wo_GetPostLikes($_GET['post_id']);
                 }
-            }
-            elseif ($_GET['table'] == 'comment') {
+            } elseif ($_GET['table'] == 'comment') {
                 if (!empty($_GET['type']) && $_GET['type'] == 'like' && !empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) {
-                    $likedUsers = Wo_GetPostCommentLikes($_GET['post_id'],20,Wo_Secure($_GET['offset']));
-                }
-                else{
+                    $likedUsers = Wo_GetPostCommentLikes($_GET['post_id'], 20, Wo_Secure($_GET['offset']));
+                } else {
                     $likedUsers = Wo_GetPostCommentLikes($_GET['post_id']);
                 }
-                $data['title'] = $wo['lang']['users_liked_comment'];
-            }
-            elseif ($_GET['table'] == 'reply') {
+                $data['title'] = TextForMode('users_liked_comment');
+            } elseif ($_GET['table'] == 'reply') {
                 if (!empty($_GET['type']) && $_GET['type'] == 'like' && !empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) {
-                    $likedUsers = Wo_GetPostCommentReplyLikes($_GET['post_id'],20,Wo_Secure($_GET['offset']));
-                }
-                else{
+                    $likedUsers = Wo_GetPostCommentReplyLikes($_GET['post_id'], 20, Wo_Secure($_GET['offset']));
+                } else {
                     $likedUsers = Wo_GetPostCommentReplyLikes($_GET['post_id']);
                 }
                 $data['title'] = $wo['lang']['users_liked_comment'];
             }
             if (count($likedUsers) > 0) {
-
                 $post_info = array();
-
                 if ($_GET['table'] == 'post') {
-                    $post_info = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_POSTS);
-                }
-                elseif ($_GET['table'] == 'comment') {
-                    $comment = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS);
+                    $post_info = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_POSTS);
+                } elseif ($_GET['table'] == 'comment') {
+                    $comment = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS);
                     if (!empty($comment->post_id)) {
-                        $post_info = $db->where('id',$comment->post_id)->getOne(T_POSTS);
+                        $post_info = $db->where('id', $comment->post_id)->getOne(T_POSTS);
                     }
-                }
-                elseif ($_GET['table'] == 'reply') {
-                    $comment = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS_REPLIES);
+                } elseif ($_GET['table'] == 'reply') {
+                    $comment = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS_REPLIES);
                     if (!empty($comment->comment_id)) {
-                        $comment = $db->where('id',$comment->comment_id)->getOne(T_COMMENTS);
+                        $comment = $db->where('id', $comment->comment_id)->getOne(T_COMMENTS);
                         if (!empty($comment->post_id)) {
-                            $post_info = $db->where('id',$comment->post_id)->getOne(T_POSTS);
+                            $post_info = $db->where('id', $comment->post_id)->getOne(T_POSTS);
                         }
                     }
                 }
-                
                 foreach ($likedUsers as $wo['WondredLikedusers']) {
+                    $wo['WondredLikedusers']['anonymous'] = false;
                     $wo['WondredLikedusers']['page_info'] = array();
                     if (!empty($post_info) && !empty($post_info->page_id)) {
                         $wo['WondredLikedusers']['page_info'] = Wo_PageData($post_info->page_id);
                     }
-                    
                     if (!empty($wo['WondredLikedusers']['page_info']) && !empty($post_info) && $post_info->page_id > 0 && $wo['WondredLikedusers']['page_info']['user_id'] == $wo['WondredLikedusers']['user_id']) {
                         $data['html'] .= Wo_LoadPage('story/page-post-likes');
-                    }
-                    else{
+                    } else {
+                        $wo['WondredLikedusers']['anonymous'] = false;
+                        if ($wo['config']['shout_box_system'] == 1 && !empty($post_info) && $post_info->postPrivacy == 4 && $wo['WondredLikedusers']['user_id'] == $post_info->user_id) {
+                            $wo['WondredLikedusers']['anonymous'] = true;
+                        }
                         $data['html'] .= Wo_LoadPage('story/post-likes-wonders');
                     }
                 }
@@ -1619,18 +2317,16 @@ if ($f == 'posts') {
     }
     if ($s == 'get_post_shared') {
         if (!empty($_GET['post_id'])) {
-            $data       = array(
+            $data = array(
                 'status' => 200,
                 'html' => '',
-                'title' => $wo['lang']['users_shared_post']
+                'title' => TextForMode('users_shared_post')
             );
             if (!empty($_GET['type']) && $_GET['type'] == 'share' && !empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) {
-                $sharedUsers = Wo_GetPostShared($_GET['post_id'],20,Wo_Secure($_GET['offset']));
-            }
-            else{
+                $sharedUsers = Wo_GetPostShared($_GET['post_id'], 20, Wo_Secure($_GET['offset']));
+            } else {
                 $sharedUsers = Wo_GetPostShared($_GET['post_id']);
             }
-            
             if (count($sharedUsers) > 0) {
                 foreach ($sharedUsers as $wo['WondredLikedusers']) {
                     $data['html'] .= Wo_LoadPage('story/post-likes-wonders');
@@ -1645,69 +2341,58 @@ if ($f == 'posts') {
     }
     if ($s == 'get_post_wonders') {
         if (!empty($_GET['post_id']) && !empty($_GET['table'])) {
-            $data          = array(
+            $data = array(
                 'status' => 200,
                 'html' => '',
                 'title' => $wo['lang']['users_wondered_post']
             );
             if ($_GET['table'] == 'post') {
                 if (!empty($_GET['type']) && $_GET['type'] == 'wonder' && !empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) {
-                    $WonderedUsers = Wo_GetPostWonders($_GET['post_id'],20,Wo_Secure($_GET['offset']));
-                }
-                else{
+                    $WonderedUsers = Wo_GetPostWonders($_GET['post_id'], 20, Wo_Secure($_GET['offset']));
+                } else {
                     $WonderedUsers = Wo_GetPostWonders($_GET['post_id']);
                 }
-            }
-            elseif ($_GET['table'] == 'comment') {
+            } elseif ($_GET['table'] == 'comment') {
                 if (!empty($_GET['type']) && $_GET['type'] == 'wonder' && !empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) {
-                    $WonderedUsers = Wo_GetPostCommentWonders($_GET['post_id'],20,Wo_Secure($_GET['offset']));
-                }
-                else{
+                    $WonderedUsers = Wo_GetPostCommentWonders($_GET['post_id'], 20, Wo_Secure($_GET['offset']));
+                } else {
                     $WonderedUsers = Wo_GetPostCommentWonders($_GET['post_id']);
                 }
                 $data['title'] = $wo['lang']['users_wondered_comment'];
-            }
-            elseif ($_GET['table'] == 'reply') {
+            } elseif ($_GET['table'] == 'reply') {
                 if (!empty($_GET['type']) && $_GET['type'] == 'wonder' && !empty($_GET['offset']) && is_numeric($_GET['offset']) && $_GET['offset'] > 0) {
-                    $WonderedUsers = Wo_GetPostCommentReplyWonders($_GET['post_id'],20,Wo_Secure($_GET['offset']));
-                }
-                else{
+                    $WonderedUsers = Wo_GetPostCommentReplyWonders($_GET['post_id'], 20, Wo_Secure($_GET['offset']));
+                } else {
                     $WonderedUsers = Wo_GetPostCommentReplyWonders($_GET['post_id']);
                 }
                 $data['title'] = $wo['lang']['users_wondered_comment'];
             }
             if (count($WonderedUsers) > 0) {
                 $post_info = array();
-
                 if ($_GET['table'] == 'post') {
-                    $post_info = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_POSTS);
-                }
-                elseif ($_GET['table'] == 'comment') {
-                    $comment = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS);
+                    $post_info = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_POSTS);
+                } elseif ($_GET['table'] == 'comment') {
+                    $comment = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS);
                     if (!empty($comment->post_id)) {
-                        $post_info = $db->where('id',$comment->post_id)->getOne(T_POSTS);
+                        $post_info = $db->where('id', $comment->post_id)->getOne(T_POSTS);
                     }
-                }
-                elseif ($_GET['table'] == 'reply') {
-                    $comment = $db->where('id',Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS_REPLIES);
+                } elseif ($_GET['table'] == 'reply') {
+                    $comment = $db->where('id', Wo_Secure($_GET['post_id']))->getOne(T_COMMENTS_REPLIES);
                     if (!empty($comment->comment_id)) {
-                        $comment = $db->where('id',$comment->comment_id)->getOne(T_COMMENTS);
+                        $comment = $db->where('id', $comment->comment_id)->getOne(T_COMMENTS);
                         if (!empty($comment->post_id)) {
-                            $post_info = $db->where('id',$comment->post_id)->getOne(T_POSTS);
+                            $post_info = $db->where('id', $comment->post_id)->getOne(T_POSTS);
                         }
                     }
                 }
-
                 foreach ($WonderedUsers as $wo['WondredLikedusers']) {
                     $wo['WondredLikedusers']['page_info'] = array();
                     if (!empty($post_info) && !empty($post_info->page_id)) {
                         $wo['WondredLikedusers']['page_info'] = Wo_PageData($post_info->page_id);
                     }
-                    
                     if (!empty($wo['WondredLikedusers']['page_info']) && !empty($post_info) && $post_info->page_id > 0 && $wo['WondredLikedusers']['page_info']['user_id'] == $wo['WondredLikedusers']['user_id']) {
                         $data['html'] .= Wo_LoadPage('story/page-post-likes');
-                    }
-                    else{
+                    } else {
                         $data['html'] .= Wo_LoadPage('story/post-likes-wonders');
                     }
                 }
@@ -1759,7 +2444,7 @@ if ($f == 'posts') {
         exit();
     }
     if ($s == 'add-video-view' && isset($_GET['post_id']) && is_numeric($_GET['post_id'])) {
-        $post_id    = $_GET['post_id'];
+        $post_id    = Wo_Secure($_GET['post_id']);
         $data       = array(
             'status' => 300
         );
@@ -1793,6 +2478,18 @@ if ($f == 'posts') {
         if (Wo_SharePost($post_id, $owner)) {
             $data['status'] = 200;
         }
+        header("Content-type: application/json");
+        echo json_encode($data);
+        exit();
+    }
+    if ($s == 'processing_video' && isset($_GET['post_id']) && !empty($_GET['post_id']) && is_numeric($_GET['post_id'])) {
+        $data    = array(
+            'status' => 200
+        );
+        $post_id = Wo_Secure($_GET['post_id']);
+        $db->where('id', $post_id)->where('user_id', $wo['user']['id'])->update(T_POSTS, array(
+            'processing' => 0
+        ));
         header("Content-type: application/json");
         echo json_encode($data);
         exit();

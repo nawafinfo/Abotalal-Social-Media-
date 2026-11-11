@@ -695,7 +695,10 @@ function Wo_UrlDomain($url)
 }
 function Wo_Secure($string, $censored_words = 1, $br = true, $strip = 0) {
     global $sqlConnect;
-    $string = trim($string);
+    if ($string === null || is_array($string) || is_object($string)) {
+        $string = '';
+    }
+    $string = trim((string) $string);
     $string = cleanString($string);
     $string = mysqli_real_escape_string($sqlConnect, $string);
     $string = htmlspecialchars($string, ENT_QUOTES);
@@ -739,7 +742,7 @@ function Wo_BbcodeSecure($string) {
     return $string;
 }
 function Wo_Decode($string) {
-    return htmlspecialchars_decode($string);
+    return htmlspecialchars_decode((string) $string);
 }
 function Wo_GenerateKey($minlength = 20, $maxlength = 20, $uselower = true, $useupper = true, $usenumbers = true, $usespecial = false) {
     $charset = '';
@@ -1607,10 +1610,13 @@ function Wo_GetIcon($icon) {
 
 function Wo_IsFileAllowed($file_name) {
     global $wo;
+    if (empty($file_name) || !is_string($file_name)) {
+        return false;
+    }
     $new_string        = pathinfo($file_name, PATHINFO_FILENAME) . '.' . strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
     $extension_allowed = explode(',', $wo['config']['allowedExtenstion']);
     $file_extension    = pathinfo($new_string, PATHINFO_EXTENSION);
-    if(!in_array($file_extension, $extension_allowed)){
+    if (empty($file_extension) || !in_array($file_extension, $extension_allowed)){
         return false;
     }
     return true;

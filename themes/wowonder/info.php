@@ -1,5 +1,5 @@
 <?php
-$themeName = 'WoWonder';
+$themeName = 'ABOTALAL';
 
 $themeFolder = 'wowonder';
 

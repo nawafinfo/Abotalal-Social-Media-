@@ -10,7 +10,7 @@
 			</div>
 			<div class="modal-footer">
 				<div class="ball-pulse"><div></div><div></div><div></div></div>
-				<button id="unfriend_btn" type="button" onclick="Wo_RegisterFollow(<?php echo $wo['follow']['user_id'];?>)" class="btn btn-main"><?php echo $wo['lang']['yes']; ?></button>
+				<button id="unfriend_btn" type="button" onclick="Wo_RegisterFollow(<?php echo !empty($wo['follow']['user_id']) ? $wo['follow']['user_id'] : 0;?>)" class="btn btn-main"><?php echo $wo['lang']['yes']; ?></button>
 			</div>
 		</div>
 	</div>

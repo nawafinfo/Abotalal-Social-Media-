@@ -797,6 +797,8 @@ $(function () {
 
   $('form.post').ajaxForm({
     url: Wo_Ajax_Requests_File() + '?f=posts&s=insert_new_post',
+    dataType: 'json',
+    headers: {'X-Requested-With': 'XMLHttpRequest'},
     beforeSend: function () {
       var percentVal = '0%';
       bar.width(percentVal);
@@ -811,12 +813,21 @@ $(function () {
       $('#progress').slideDown(200);
       percent.html(percentVal);
     },beforeSubmit: function (a,b,c) {
-    	for (var i = 0 ;i < a.length ; i++) {
-    		if (a[i].name == 'postPhotos[]') {
-    			for (var b = 0 ;b < deleted_images.length ; b++) {
-    				if (a[i].value.name == deleted_images[b]) {
-    					a[i] = {name:'',value:''};
+    	for (var i = a.length - 1; i >= 0; i--) {
+    		var field_name = a[i].name;
+    		var field_val = a[i].value;
+    		if (field_name == 'postPhotos[]' || field_name == 'postVideo' || field_name == 'postFile' || field_name == 'postMusic' || field_name == 'video_thumb') {
+    			var empty_file = !field_val || (typeof field_val === 'object' && !field_val.name);
+    			var deleted_photo = false;
+    			if (field_name == 'postPhotos[]' && field_val && field_val.name) {
+    				for (var d = 0; d < deleted_images.length; d++) {
+    					if (field_val.name == deleted_images[d]) {
+    						deleted_photo = true;
+    					}
     				}
+    			}
+    			if (empty_file || deleted_photo) {
+    				a.splice(i, 1);
     			}
     		}
     	}
@@ -824,6 +835,9 @@ $(function () {
     	
     },
     success: function (data) {
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch (e) { data = {}; }
+      }
       $('#post_color_input').val("");
       $('.all_colors').hide();
 	  $('.wo_pub_txtara_combo').css("cssText", "");
@@ -838,11 +852,11 @@ $(function () {
       $("#postSticker").val('');
       if(data.status == 200) {
       	$('#user_post_count').text(data.post_count);
-
-        if(data.html.length > 0) {
+        var post_html = data.html || '';
+        if(post_html.length > 0) {
           $('#posts, #posts_hashtag').find('.posts-container').remove();
         }
-        $('#posts, #posts_hashtag').prepend(data.html);
+        $('#posts, #posts_hashtag').prepend(post_html);
         $('#video-form, #emo-form, #music-form, #map-form, #file-form, #photo-form, #album-form, .feeling-type, #poll-form, #gif-form').slideUp(200);
         $(".video-poster-image").hide(10, function() {
           $(this).find('.preview').show(10);
@@ -918,6 +932,14 @@ $(function () {
       } 
       fetch_url = 1;
       $('#publisher-box-focus .pub-footer-bottom').find('.ball-pulse').fadeOut(100);
+      publisher_button.attr('disabled', false);
+      $('#publisher-button').removeClass('btn-loading');
+    },
+    error: function () {
+      publisher_button.attr('disabled', false);
+      $('#publisher-button').removeClass('btn-loading');
+      $('#publisher-box-focus .pub-footer-bottom').find('.ball-pulse').fadeOut(100);
+      $('#progress').slideUp(200);
     }
   });
 

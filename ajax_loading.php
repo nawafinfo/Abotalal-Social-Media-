@@ -104,6 +104,9 @@ if ($wo['config']['membership_system'] == 1) {
                 case 'poke':
                     include('sources/poke.php');
                     break;
+                case 'notifications':
+                    include('sources/notifications.php');
+                    break;
                 case 'most_liked':
                     include('sources/most_liked.php');
                     break;
@@ -413,6 +416,9 @@ if ($wo['config']['membership_system'] == 1) {
                 case 'live':
                     include('sources/live.php');
                     break;
+                case 'reels':
+                    include('sources/reels.php');
+                    break;
             }
         }
         else{
@@ -639,6 +645,9 @@ else{
             break;
         case 'poke':
             include('sources/poke.php');
+            break;
+        case 'notifications':
+            include('sources/notifications.php');
             break;
         case 'most_liked':
             include('sources/most_liked.php');
@@ -948,6 +957,9 @@ else{
             break;
         case 'live':
             include('sources/live.php');
+            break;
+        case 'reels':
+            include('sources/reels.php');
             break;
     }
 }

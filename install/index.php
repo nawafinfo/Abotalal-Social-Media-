@@ -54,7 +54,7 @@ $sql_db_pass = "'  . $_POST['sql_pass'] . '";
 $sql_db_name = "'  . $_POST['sql_name'] . '";
 
 // Site URL
-$site_url = "' . $_POST['site_url'] . '"; // e.g (http://example.com)
+$site_url = "' . rtrim($_POST['site_url'], '/') . '"; // e.g (http://localhost/abotalal)
 
 // Purchase code
 $purchase_code = "' . trim($_POST['purshase_code']) . '"; // Your purchase code, don\'t give it to anyone. 
@@ -121,7 +121,7 @@ if (file_exists('../htaccess.txt')) {
             //chmod upload folder
             @chmod("./upload", 0777);
 
-           $success = 'WoWonder successfully installed, please wait ..';
+           $success = 'ABOTALAL successfully installed, please wait ..';
         } else {
           $ServerErrors[] = "Error found while installing, please contact us.";
         }
@@ -133,7 +133,7 @@ if (file_exists('../htaccess.txt')) {
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <title>WoWonder | Installation</title>
+        <title>ABOTALAL | Installation</title>
         <link rel="shortcut icon" type="image/png" href="../themes/wowonder/img/icon.png"/>
         <link rel="stylesheet" href="../themes/wowonder/stylesheet/general-style-plugins.css">
         <link rel="stylesheet" href="style.css">
@@ -200,6 +200,11 @@ if (file_exists('../htaccess.txt')) {
             if (!is_writable('../config.php')) {
             $is_writable = false;
             $disabled = true;
+            }
+            if (!file_exists('../.htaccess')) {
+                if (file_exists('../htaccess.txt')) {
+                    @file_put_contents('../.htaccess', file_get_contents('../htaccess.txt'));
+                }
             }
             if (!file_exists('../.htaccess')) {
             $is_htaccess = false;
@@ -278,8 +283,8 @@ if (file_exists('../htaccess.txt')) {
                     </thead>
                     <tbody>
                       <tr>
-                        <td>PHP 5.5+</td>
-                        <td>Required PHP version 5.5 or more</td>
+                        <td>PHP 5.5+ / 7 / 8</td>
+                        <td>Works with PHP 5.5, 7.x and 8.x (XAMPP and Apache)</td>
                         <td><?php echo ($php == true) ? '<font color="green"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M9.707 17.707l10-10-1.414-1.414L9 15.586l-4.293-4.293-1.414 1.414 5 5a.997.997 0 0 0 1.414 0z"/></svg> Installed</font>' : '<font color="red"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M6.707 18.707L12 13.414l5.293 5.293 1.414-1.414L13.414 12l5.293-5.293-1.414-1.414L12 10.586 6.707 5.293 5.293 6.707 10.586 12l-5.293 5.293z"/></svg> Not installed</font>'?></td>
                       </tr>
                       <tr>
@@ -337,7 +342,7 @@ if (file_exists('../htaccess.txt')) {
                                 </div>
                                 <?php } else if ($page == 'finish') { ?>
                                 <div class="req">
-                                    <p>Congratulations! WoWonder script has been successfully installed and your website is ready.</p>
+                                    <p>Congratulations! ABOTALAL has been successfully installed and your website is ready.</p>
                   <p>Login to your admin panel to make changes and modify any default content according to your needs.</p>
                   <br>
                   <p>If you have any question, please <a href="mailto:wowondersocial@gmail.com" class="main">let us know</a>.</p>

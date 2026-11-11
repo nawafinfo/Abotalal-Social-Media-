@@ -6,6 +6,9 @@ header('Cache-Control: max-age=846000');
 
 @ini_set('max_execution_time', 0);
 require_once('config.php');
+if (file_exists(__DIR__ . '/php_compat.php')) {
+    require_once(__DIR__ . '/php_compat.php');
+}
 
 require_once('assets/libraries/DB/vendor/autoload.php');
 
@@ -90,6 +93,37 @@ $config['s3_site_url_2'] = $s3_site_url_2;
 
 
 $wo['config']              = $config;
+$compat_defaults = array(
+    'reels_upload' => 1,
+    'have_reels' => 1,
+    'directory_system' => 0,
+    'directory_landing_page' => 'welcome',
+    'filesVersion' => isset($config['version']) ? $config['version'] : '3.0.2',
+    'developer_mode' => 0,
+    'withdrawal_payment_method' => '',
+    'website_mode' => '',
+    'notify_new_post' => 0,
+    'ai_post_system' => 0,
+    'ai_image_system' => 0,
+    'shout_box_system' => 0,
+    'monetization' => 0,
+    'who_upload' => 'all',
+    'post_approval' => 0,
+    'ffmpeg_system' => 'off',
+    'playtube_url' => '',
+    'deepsound_url' => '',
+    'adult_images' => 0,
+    'adult_images_action' => 0,
+    'colored_posts_system' => 0,
+    'title_required_for_video' => 0,
+    'ffmpeg_binary_file' => '/usr/bin/ffmpeg'
+);
+foreach ($compat_defaults as $compat_key => $compat_val) {
+    if (!isset($wo['config'][$compat_key])) {
+        $wo['config'][$compat_key] = $compat_val;
+        $config[$compat_key] = $compat_val;
+    }
+}
 $ccode                     = Wo_CustomCode('g');
 $ccode                     = (is_array($ccode))  ? $ccode    : array();
 $wo['config']['header_cc'] = (!empty($ccode[0])) ? $ccode[0] : '';
@@ -325,6 +359,15 @@ if (empty($_SESSION['lang'])) {
 }
 $wo['language']      = $_SESSION['lang'];
 $wo['language_type'] = 'ltr';
+if (!isset($wo['user_setting'])) {
+    $wo['user_setting'] = '';
+}
+if (!isset($wo['session_active_background'])) {
+    $wo['session_active_background'] = 0;
+}
+if (!isset($wo['follow']) || !is_array($wo['follow'])) {
+    $wo['follow'] = array('user_id' => 0);
+}
 // Add rtl languages here.
 $rtl_langs           = array(
     'arabic'
@@ -351,13 +394,30 @@ if (is_array($wo['ad-con']) && isset($wo['ad-con']['date']) && strtotime($wo['ad
         'date' => date('Y-m-d'),
         'ads' => array()
     ))), time() + (10 * 365 * 24 * 60 * 60));
+    $wo['ad-con'] = array(
+        'date' => date('Y-m-d'),
+        'ads' => array()
+    );
+}
+if (!is_array($wo['ad-con'])) {
+    $wo['ad-con'] = array(
+        'date' => date('Y-m-d'),
+        'ads' => array()
+    );
+}
+if (!isset($wo['ad-con']['ads']) || !is_array($wo['ad-con']['ads'])) {
+    if (!empty($wo['ad-con']['ads']) && (is_string($wo['ad-con']['ads']) || is_numeric($wo['ad-con']['ads']))) {
+        $wo['ad-con']['ads'] = array_filter(explode(',', (string) $wo['ad-con']['ads']));
+    } else {
+        $wo['ad-con']['ads'] = array();
+    }
 }
 
 if (!isset($_COOKIE['_us'])) {
     setcookie('_us', time() + (60 * 60 * 24) , time() + (10 * 365 * 24 * 60 * 60));
 }
 
-if (isset($_COOKIE['_us']) && $_COOKIE['_us'] < time() || 1) {
+if (isset($_COOKIE['_us']) && $_COOKIE['_us'] < time()) {
     setcookie('_us', time() + (60 * 60 * 24) , time() + (10 * 365 * 24 * 60 * 60));
     $expired_stories = $db->where('expire',time(),'<')->get(T_USER_STORY);
     foreach ($expired_stories as $key => $value) {
@@ -627,7 +687,7 @@ $wo['css_file_header']   = "
 
 $colors                  = $wo['colors'] = shuffle_assoc(array(
     '#b582af',
-    '#a84849',
+    '#DC143C',
     '#fc9cde',
     '#f9c270',
     '#70a0e0',

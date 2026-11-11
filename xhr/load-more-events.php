@@ -56,7 +56,7 @@ if ($f == "load-more-events") {
             $events = Wo_GetPastEvents($_GET['offset']);
             if (count($events) > 0) {
                 foreach ($events as $wo['event']) {
-                    $html .= Wo_LoadPage('events/includes/events-past-list');
+                    $html .= Wo_LoadPage('events/includes/events-list');
                 }
                 $data = array(
                     'status' => 200,

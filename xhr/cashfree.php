@@ -1,5 +1,85 @@
 <?php 
 if ($f == 'cashfree') {
+	if ($s == 'payment_session') {
+		if (!empty($_POST['phone']) && !empty($_POST['name']) && !empty($_POST['email']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) && !empty($_POST['amount']) && is_numeric($_POST['amount'])) {
+
+
+			$order_id = uniqid().rand(100,1000);
+			$customer_id = uniqid().rand(100,1000);
+		    $name = Wo_Secure($_POST['name']);
+		    $email = Wo_Secure($_POST['email']);
+		    $phone = Wo_Secure($_POST['phone']);
+		    $order_amount = Wo_Secure($_POST['amount']);
+
+		    $secretKey = $wo['config']['cashfree_secret_key'];
+			$cashfree_client_key = $wo['config']['cashfree_client_key'];
+			$callback_url = $wo['config']['site_url'] . "/requests.php?f=cashfree&s=wallet&amount=".$order_amount."&user_id=".$wo['user']['user_id']."&order_id=".$order_id."&customer_id=".$customer_id;
+
+
+			$curl = curl_init();
+
+			curl_setopt_array($curl, array(
+			  CURLOPT_URL => 'https://sandbox.cashfree.com/pg/orders',
+			  CURLOPT_RETURNTRANSFER => true,
+			  CURLOPT_ENCODING => '',
+			  CURLOPT_MAXREDIRS => 10,
+			  CURLOPT_TIMEOUT => 0,
+			  CURLOPT_FOLLOWLOCATION => true,
+			  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			  CURLOPT_CUSTOMREQUEST => 'POST',
+			  CURLOPT_POSTFIELDS =>'
+			{
+			  "customer_details": {
+			    "customer_id": "'.$customer_id.'",
+			    "customer_email": "'.$email.'",
+			    "customer_phone": "'.$phone.'"
+			  },
+			  "order_id": "'.$order_id.'",
+			  "order_amount": '.$order_amount.',
+			  "order_currency": "INR",
+			  "order_meta": {
+			    "return_url": "'.$callback_url.'"
+			  }
+			}
+			',
+			  CURLOPT_HTTPHEADER => array(
+			    'accept: application/json',
+			    'content-type: application/json',
+			    'x-api-version: 2023-08-01',
+			    'x-client-id: ' . $wo['config']['cashfree_client_key'],
+			    'x-client-secret: ' . $wo['config']['cashfree_secret_key']
+			  ),
+			));
+
+			$response = curl_exec($curl);
+
+			curl_close($curl);
+
+			if (!empty($response)) {
+				$response = json_decode($response);
+
+				if (!empty($response->message)) {
+					$data['status'] = 400;
+					$data['message'] = $error_icon . $response->message;
+				}
+				else{
+					$data['status'] = 200;
+					$data['payment_session_id'] = $response->payment_session_id;
+				}
+			}
+			else{
+				$data['status'] = 400;
+				$data['message'] = $error_icon . $wo['lang']['something_wrong'];
+			}
+		}
+		else{
+    		$data['status'] = 400;
+			$data['message'] = $error_icon . $wo['lang']['please_check_details'];
+    	}
+		header("Content-type: application/json");
+	    echo json_encode($data);
+	    exit();
+	}
     if ($s == 'initialize') {
     	$types = array(
 	        'week',
@@ -32,7 +112,7 @@ if ($f == 'cashfree') {
 		    if ($type == 'wallet') {
 		    	if (!empty($_POST['amount']) && is_numeric($_POST['amount']) && $_POST['amount'] > 0) {
 		    		$price = $_POST['amount'];
-		    		$callback_url = $wo['config']['site_url'] . "/requests.php?f=cashfree&s=wallet&amount=".$price;
+		    		$callback_url = $wo['config']['site_url'] . "/requests.php?f=cashfree&s=wallet&amount=".$price."&user_id=".$wo['user']['user_id'];
 		    	}
 		    	else{
 		    		$data['status'] = 400;
@@ -284,33 +364,69 @@ if ($f == 'cashfree') {
     }
 
     if ($s == 'wallet') {
-    	if (empty($_POST['txStatus']) || $_POST['txStatus'] != 'SUCCESS') {
+    	if (empty($_GET['user_id']) || empty($_GET['order_id']) || empty($_GET['amount']) || !is_numeric($_GET['user_id'])) {
     		header("Location: " . Wo_SeoLink('index.php?link1=oops'));
 	        exit();
     	}
-    	$orderId = $_POST["orderId"];
-		$orderAmount = $_POST["orderAmount"];
-		$referenceId = $_POST["referenceId"];
-		$txStatus = $_POST["txStatus"];
-		$paymentMode = $_POST["paymentMode"];
-		$txMsg = $_POST["txMsg"];
-		$txTime = $_POST["txTime"];
-		$signature = $_POST["signature"];
-		$data = $orderId.$orderAmount.$referenceId.$txStatus.$paymentMode.$txMsg.$txTime;
-		$hash_hmac = hash_hmac('sha256', $data, $wo['config']['cashfree_secret_key'], true) ;
-		$computedSignature = base64_encode($hash_hmac);
-		if ($signature == $computedSignature) {
-            if (Wo_ReplenishingUserBalance($_GET['amount'])) {
-                $_GET['amount'] = Wo_Secure($_GET['amount']);
-                $create_payment_log = mysqli_query($sqlConnect, "INSERT INTO " . T_PAYMENT_TRANSACTIONS . " (`userid`, `kind`, `amount`, `notes`) VALUES ('" . $wo['user']['id'] . "', 'WALLET', '" . $_GET['amount'] . "', 'Cashfree')");
-                $_SESSION['replenished_amount'] = $_GET['amount'];
-                header("Location: " . Wo_SeoLink('index.php?link1=wallet'));
-                exit();
-            } else {
-                header("Location: " . Wo_SeoLink('index.php?link1=wallet'));
-                exit();
-            }
-        } else {
+    	$wo['user'] = Wo_UserData(Wo_Secure($_GET["user_id"]));
+		if (!empty($wo['user'])) {
+
+			$curl = curl_init();
+
+			curl_setopt_array($curl, array(
+			  CURLOPT_URL => 'https://sandbox.cashfree.com/pg/orders/' . $_GET['order_id'],
+			  CURLOPT_RETURNTRANSFER => true,
+			  CURLOPT_ENCODING => '',
+			  CURLOPT_MAXREDIRS => 10,
+			  CURLOPT_TIMEOUT => 0,
+			  CURLOPT_FOLLOWLOCATION => true,
+			  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			  CURLOPT_CUSTOMREQUEST => 'GET',
+			  CURLOPT_HTTPHEADER => array(
+			    'accept: application/json',
+			    'x-api-version: 2023-08-01',
+			    'x-client-id: ' . $wo['config']['cashfree_client_key'],
+			    'x-client-secret: ' . $wo['config']['cashfree_secret_key']
+			  ),
+			));
+
+			$response = curl_exec($curl);
+
+			curl_close($curl);
+
+			if (!empty($response)) {
+				$response = json_decode($response);
+
+				if (!empty($response->order_status) && $response->order_status == 'PAID') {
+					$wo["loggedin"] = true;
+		            if (Wo_ReplenishingUserBalance($_GET['amount'])) {
+		                $_GET['amount'] = Wo_Secure($_GET['amount']);
+		                $create_payment_log = mysqli_query($sqlConnect, "INSERT INTO " . T_PAYMENT_TRANSACTIONS . " (`userid`, `kind`, `amount`, `notes`) VALUES ('" . $wo['user']['id'] . "', 'WALLET', '" . $_GET['amount'] . "', 'Cashfree')");
+		                $_SESSION['replenished_amount'] = $_GET['amount'];
+		                if (!empty($_COOKIE['redirect_page'])) {
+		                	$redirect_page = preg_replace('/on[^<>=]+=[^<>]*/m', '', $_COOKIE['redirect_page']);
+						    $redirect_page = preg_replace('/\((.*?)\)/m', '', $redirect_page);
+		                	header("Location: " . $redirect_page);
+		                }
+		                else{
+		                	header("Location: " . Wo_SeoLink('index.php?link1=wallet'));
+		                }
+		                exit();
+		            } else {
+		                header("Location: " . Wo_SeoLink('index.php?link1=wallet'));
+		                exit();
+		            }
+				}
+				else{
+					header("Location: " . Wo_SeoLink('index.php?link1=oops'));
+	        		exit();
+				}
+			}
+			else{
+				header("Location: " . Wo_SeoLink('index.php?link1=oops'));
+	        	exit();
+			}
+	    } else {
             header("Location: " . Wo_SeoLink('index.php?link1=wallet'));
             exit();
         }
@@ -346,6 +462,7 @@ if ($f == 'cashfree') {
 	            }
 		        $user_data = Wo_UserData($fund->user_id);
 	            $db->where('user_id',$fund->user_id)->update(T_USERS,array('balance' => $user_data['balance'] + $amount));
+				cache($fund->user_id, 'users', 'delete');
 	            $fund_raise_id = $db->insert(T_FUNDING_RAISE,array('user_id' => $wo['user']['user_id'],
 	                                              'funding_id' => $fund_id,
 	                                              'amount' => $amount,

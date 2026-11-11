@@ -212,7 +212,7 @@ if ($wo['config']['live_video'] == 1) {
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script>
         function Wo_Ajax_Requests_File(){
-            return "<?php echo $wo['config']['site_url'].'/requests.php';?>"
+            return "<?php echo rtrim($wo['config']['site_url'], '/'); ?>/requests.php"
         }
     </script>
 </head>

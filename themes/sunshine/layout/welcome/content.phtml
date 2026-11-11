@@ -132,12 +132,18 @@ $(function() {
         	window.location.href = data.location;
         }, 1000);
       } else {
-        var errors = data.errors.join("<br>");
+        var errors = (data && data.errors) ? data.errors.join("<br>") : 'Login failed';
 		$this.find('button').attr("disabled", false);
 		$this.find('.loading').addClass('hidden');
         $state.html(errors);
       } 
       working = false;
+    },
+    error: function() {
+      working = false;
+      $this.find('button').attr("disabled", false);
+      $this.find('.loading').addClass('hidden');
+      $state.html('Login request failed. Please try again.');
     }
   });
 });

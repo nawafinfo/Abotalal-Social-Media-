@@ -3875,7 +3875,7 @@ function Wo_GetSideBarAds() {
     $user_id      = $wo['user']['user_id'];
     $user_country = $wo['user']['country_id'];
     $query_one    = '';
-    $con_list     = implode(',', $wo['ad-con']['ads']);
+        $con_list     = wo_implode_list($wo['ad-con']['ads']);
     if ($con_list) {
         $query_one .= " AND `id` NOT IN ({$con_list}) ";
     }
@@ -4087,7 +4087,7 @@ function Wo_GetPostAds($last_id = 0) {
     $query_one    = '';
     $con_list     = false;
     if (!empty($wo['ad-con']) && !empty($wo['ad-con']['ads'])) {
-        $con_list     = implode(',', $wo['ad-con']['ads']);
+    $con_list     = wo_implode_list(isset($wo['ad-con']['ads']) ? $wo['ad-con']['ads'] : array());
     }
     
     if ($last_id && $last_id > 0) {

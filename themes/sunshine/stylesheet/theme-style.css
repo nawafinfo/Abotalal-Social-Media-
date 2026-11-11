@@ -1426,7 +1426,7 @@ svg {vertical-align: middle;}
 
 @media (max-width: 1140px) {
 .chat_acts {display: none;}
-/*.recipient-chat-user .chat-loading-icon .ball-pulse {right: 3px;top: 8px;background: #1e2321;transform: scale(0.8);}*/
+/*.recipient-chat-user .chat-loading-icon .ball-pulse {right: 3px;top: 8px;background: #1E40AF;transform: scale(0.8);}*/
 }
 
 @media (max-width: 1270px) {

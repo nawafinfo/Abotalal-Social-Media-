@@ -996,7 +996,7 @@ function Wo_GetAd($type, $admin = true) {
     }
     $sql_query_one = mysqli_query($sqlConnect, $query_one);
     $fetched_data  = mysqli_fetch_assoc($sql_query_one);
-    return $fetched_data['code'];
+    return (!empty($fetched_data) && isset($fetched_data['code'])) ? $fetched_data['code'] : '';
 }
 function Wo_IsAdActive($type) {
     global $sqlConnect;

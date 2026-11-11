@@ -35,7 +35,7 @@ if (isset($_SESSION['open_chat'])) {
 						</li>
 						<li class="divider"></li>
 						<li>
-							<a href="<?php echo Wo_SeoLink('index.php?link1=setting&' . $wo['user_setting'] . 'page=privacy-setting');?>" data-ajax="?link1=setting&<?php echo $wo['user_setting'];?>page=privacy-setting"><?php echo $wo['lang']['privacy'];?></a>
+							<a href="<?php echo Wo_SeoLink('index.php?link1=setting&' . (isset($wo['user_setting']) ? $wo['user_setting'] : '') . 'page=privacy-setting');?>" data-ajax="?link1=setting&<?php echo isset($wo['user_setting']) ? $wo['user_setting'] : '';?>page=privacy-setting"><?php echo $wo['lang']['privacy'];?></a>
 						</li>
 					</ul>
 				</div>

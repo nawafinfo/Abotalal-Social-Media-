@@ -8,13 +8,13 @@ form {margin-bottom: 0;}
 .btn {height: 52px;line-height: 1;font-size: 16px;transition: all 0.3s;border-radius: 2em;font-weight: 500;padding: 0 28px;letter-spacing: .5px;}
 .btn svg {margin-left: 10px;margin-top: -2px;transition: all 0.3s;vertical-align: middle;}
 .btn:hover svg {-webkit-transform: translateX(3px);-moz-transform: translateX(3px);-ms-transform: translateX(3px);-o-transform: translateX(3px);transform: translateX(3px);}
-.btn-main {color: #ffffff;background-color: #a84849;border-color: #a84849;}
+.btn-main {color: #ffffff;background-color: #DC143C;border-color: #DC143C;}
 .btn-main:disabled, .btn-main:focus {color: #fff;}
-.btn-main:hover {color: #ffffff;background-color: #c45a5b;border-color: #c45a5b;box-shadow: -2px 2px 14px rgba(168, 72, 73, 0.35);}
+.btn-main:hover {color: #ffffff;background-color: #B91C1C;border-color: #B91C1C;box-shadow: -2px 2px 14px rgba(220, 20, 60, 0.35);}
 table, td, th, tr {font-size: 14px !important;}
 small {color: #555 !important;}
 svg {vertical-align: middle;}
-.main {color: #a84849;}
+.main {color: #1E40AF;}
 .content-container {display: -webkit-box;display: -moz-box;display: -ms-flexbox;display: -webkit-flex;display: flex;-webkit-flex-direction: column;flex-direction: column;min-height: 100vh;position: relative;}
 .content-container:before, .content-container:after {-webkit-box-flex: 1;box-flex: 1;-webkit-flex-grow: 1;flex-grow: 1;content: '';display: block;height: 50px;}
 .wo_install_wiz {position: relative;background-color: white;box-shadow: 0 1px 15px 2px rgba(0, 0, 0, 0.1);border-radius: 10px;padding: 20px 30px;border-top: 1px solid rgba(0, 0, 0, 0.04);margin-top: 30px;}
@@ -26,7 +26,7 @@ body.finished .wo_install_wiz:after {height: 14px;}
 .wo_terms input[type="checkbox"] {opacity: 0;margin: 0px 0 6px;margin-left: 4px;}
 .wo_terms label {display: inline-block;position: relative;padding-left: 5px;min-height: 20px;margin-bottom: 0;cursor: pointer;user-select:none;}
 .wo_terms label::before {content: "";display: inline-block;position: absolute;width: 17px;height: 17px;left: 0;top: 0;margin-left: -20px;border: 2px solid rgba(0, 0, 0, 0.54);border-radius: 2px;background-color: #fff;transition: all 90ms cubic-bezier(0, 0, 0.2, 0.1);}
-.wo_terms input[type="checkbox"]:checked + label::before {background-color: #a84849;border-color: #a84849;}
+.wo_terms input[type="checkbox"]:checked + label::before {background-color: #DC143C;border-color: #DC143C;}
 .wo_terms label::after {display: inline-block;position: absolute;width: 16px;height: 16px;left: 0;top: 0;margin-left: -20px;padding-left: 3px;padding-top: 1px;font-size: 11px;color: #555;}
 .wo_terms input[type="checkbox"]:checked + label::after {border: 2px solid #fff;border-top: none;border-right: none;content: "";height: 5px;left: 4px;position: absolute;top: 4px;transform: rotate(-45deg);width: 10px;transition: .2s;color: #fff;}
 .wo_install_step {position: relative;}
@@ -49,7 +49,7 @@ body.step_one_done .wo_install_step .install_steps li.step-one span svg, body.st
 body.finished .wo_install_step .install_steps li span {background-color: #7ad09c;}
 input.form-control {background-color: #f4f4f4;border: 0;border-radius: 2em;height: 40px;padding: 3px 14px;color: #383838;transition: all 0.2s;}
 input.form-control:hover {background-color: #e9e9e9;}
-input.form-control:focus {background: #fff;box-shadow: 0 0 0 1.5px #a84849;}
+input.form-control:focus {background: #fff;box-shadow: 0 0 0 1.5px #1E40AF;}
 .help-block {padding-left: 13px;}
 
 .finish_confetti {width: 300px;position: fixed;bottom: -100px;left: 60px;display:none}

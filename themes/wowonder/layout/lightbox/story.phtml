@@ -1,7 +1,11 @@
+<?php
+$wo_story_media = (!empty($wo['story']['story_media']) && is_array($wo['story']['story_media'])) ? $wo['story']['story_media'][0] : array('type' => 'image', 'filename' => '', 'id' => 0);
+$wo_story_type = !empty($wo['story_type']) ? $wo['story_type'] : '';
+?>
 <div class="lightbox-backgrond" onclick="Wo_CloseLightbox();"></div>
-<?php if ($wo['story']['story_media'][0]['type'] == 'image') { ?>
+<?php if ($wo_story_media['type'] == 'image' && !empty($wo_story_media['filename'])) { ?>
 <style>
-.wo_imagecombo_lbox.story_lightbox .story_image_owner .draggableHelper_story:before, .wo_imagecombo_lbox.story_lightbox .story_image_not_owner .draggableHelper_story:before {background-image: url(<?php echo $wo['story']['story_media'][0]['filename']. "?cache=" . time();?>)}
+.wo_imagecombo_lbox.story_lightbox .story_image_owner .draggableHelper_story:before, .wo_imagecombo_lbox.story_lightbox .story_image_not_owner .draggableHelper_story:before {background-image: url(<?php echo $wo_story_media['filename']. "?cache=" . time();?>)}
 </style>
 <?php } ?>
 <div class="lightbox-content post wo_imagecombo_lbox lightpost-<?php echo $wo['story']['id'];?> <?php echo ($wo['story']['is_owner']) ? 'mobi_stor_box' : '' ?> <?php echo (!$wo['story']['is_owner']) ? 'story_width_' : '' ?> story_lightbox" id="post-<?php echo $wo['story']['id'];?>" data-post-id="<?php echo $wo['story']['id'];?>">
@@ -31,19 +35,19 @@
 	</div>
 	
 	<div class="story-img <?php echo ($wo['story']['is_owner']) ? 'story_image_owner' : 'story_image_not_owner' ?> user_story_" id="<?php echo $wo['story']['id'];?>">
-		<span class="changer previous-btn pointer" onclick="Get_PreviousStory('<?php echo $wo['story']['id'];?>','<?php echo($wo['story_type']) ?>')">
+		<span class="changer previous-btn pointer" onclick="Get_PreviousStory('<?php echo $wo['story']['id'];?>','<?php echo $wo_story_type; ?>')">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" /></svg>
 		</span>
-		<span class="changer next-btn pointer" onclick="Get_NextStory('<?php echo $wo['story']['id'];?>','<?php echo($wo['story_type']) ?>')">
+		<span class="changer next-btn pointer" onclick="Get_NextStory('<?php echo $wo['story']['id'];?>','<?php echo $wo_story_type; ?>')">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
 		</span>
 		<div id="draggableHelper" class="draggableHelper_story">
-			<?php if ($wo['story']['story_media'][0]['type'] == 'image') { ?>
-				<img src="<?php echo $wo['story']['story_media'][0]['filename']. "?cache=" . time();?>" alt="media" class="">
+			<?php if ($wo_story_media['type'] == 'image') { ?>
+				<img src="<?php echo $wo_story_media['filename']. "?cache=" . time();?>" alt="media" class="">
 			<?php }else{ ?>
-				<video class="" preload="auto" autoplay  style="width: 100%; height: 100%;" data-story-video="<?php echo $wo['story']['story_media'][0]['id'];?>" id="video_story">
-					<source src="<?php echo $wo['story']['story_media'][0]['filename'];?>" type='video/mp4'>
-					<source src="<?php echo $wo['story']['story_media'][0]['filename'];?>" type='video/webm'> 
+				<video class="" preload="auto" autoplay playsinline controls style="width: 100%; height: 100%;" data-story-video="<?php echo $wo_story_media['id'];?>" id="video_story">
+					<source src="<?php echo $wo_story_media['filename'];?>" type='video/mp4'>
+					<source src="<?php echo $wo_story_media['filename'];?>" type='video/webm'> 
 				</video>
 			<?php } ?>
 		</div>

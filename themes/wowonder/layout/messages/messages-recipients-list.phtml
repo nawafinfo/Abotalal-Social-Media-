@@ -14,7 +14,7 @@ if (!empty($message['from_id'])) {
    
 }
 ?>
-<div class="messages-recipients-list mobileopenlist <?php echo ($wo['session_active_background'] == $wo['recipient']['user_id']) ? 'active' : ''; ?>" id="messages-recipient-<?php echo $wo['recipient']['user_id']; ?>" onclick="Wo_GetUserMessages(<?php echo $wo['recipient']['user_id']; ?>,'<?php echo $wo['recipient']['name']; ?>');">
+<div class="messages-recipients-list mobileopenlist <?php echo ((isset($wo['session_active_background']) ? $wo['session_active_background'] : 0) == $wo['recipient']['user_id']) ? 'active' : ''; ?>" id="messages-recipient-<?php echo $wo['recipient']['user_id']; ?>" onclick="Wo_GetUserMessages(<?php echo $wo['recipient']['user_id']; ?>,'<?php echo $wo['recipient']['name']; ?>');">
 	<div class="avatar <?php echo Wo_RightToLeft('pull-left');?>">
 		<img alt="<?php echo $wo['recipient']['name']; ?> Profile Picture" src="<?php echo $wo['recipient']['avatar'];?>">
 		<?php if ($wo['recipient']['lastseen'] > (time() - 60)) { ?>

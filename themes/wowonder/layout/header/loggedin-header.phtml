@@ -29,6 +29,16 @@ if ($followers_alert == 0) {
 
 </ul>
 <ul class="nav navbar-nav navbar-right <?php echo Wo_RightToLeft('pull-right');?>" id="head_menu_rght">
+	<li class="fb-mobi-tab fb-mobi-home">
+		<a class="sixteen-font-size" href="<?php echo $wo['config']['site_url']; ?>" data-ajax="?index.php?link1=home" title="<?php echo $wo['lang']['home']; ?>">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
+		</a>
+	</li>
+	<li class="fb-mobi-tab fb-mobi-reels">
+		<a class="sixteen-font-size" href="<?php echo Wo_SeoLink('index.php?link1=reels'); ?>" data-ajax="?link1=reels" title="Reels">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4zM4 18V6h.5l2 4h3l-2-4h1l2 4h3l-2-4h1l2 4h3l-2-4H20v12H4z" fill="currentColor"/></svg>
+		</a>
+	</li>
 	<li class="dropdown requests-container" onclick="Wo_OpenRequestsMenu();">
 		<span class="new-update-alert<?php echo $followers_hidden_class;?>">
 			<?php echo $followers_alert?>

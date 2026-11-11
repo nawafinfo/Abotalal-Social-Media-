@@ -17,12 +17,24 @@ $required_fields = array(
     'email',
     'confirm_password'
 );
+if ($wo['config']['auto_username'] == 1) {
+    $_POST['username'] = time() . rand(111111, 999999);
+    if (empty($_POST['first_name']) || empty($_POST['last_name'])) {
+        $error_code    = 3;
+        $error_message = $wo['lang']['first_name_last_name_empty'];
+    }
+    elseif (preg_match('/[^\w\s]+/u', $_POST['first_name']) || preg_match('/[^\w\s]+/u', $_POST['last_name'])) {
+        $error_code    = 3;
+        $error_message = $wo['lang']['username_invalid_characters'];
+    }
+}
 foreach ($required_fields as $key => $value) {
     if (empty($_POST[$value]) && empty($error_code)) {
         $error_code    = 3;
         $error_message = $value . ' (POST) is missing';
     }
 }
+
 if (empty($error_code)) {
     $username         = $_POST['username'];
     $password         = $_POST['password'];
@@ -81,18 +93,76 @@ if (empty($error_code)) {
         if (!empty($_POST['ios_n_device_id'])) {
             $account_data['ios_n_device_id']  = Wo_Secure($_POST['ios_n_device_id']);
         }
+        if ($gender == 'female') {
+            $account_data['avatar'] = 'upload/photos/f-avatar.jpg';
+        }
+        if (!empty($_POST['ref'])) {
+            $get_ip = get_ip_address();
+            if (!empty($get_ip)) {
+                $_POST['ref'] = Wo_Secure($_POST['ref']);
+                $ref_user_id = Wo_UserIdFromUsername($_POST['ref']);
+                $user_date = Wo_UserData($ref_user_id);
+                if (!empty($user_date)) {
+                    if (ip_in_range($user_date['ip_address'], '/24') === false && $user_date['ip_address'] != $get_ip) {
+                        $_SESSION['ref'] = $user_date['username'];
+                        if (!empty($_SESSION['ref']) && $wo['config']['affiliate_type'] == 0) {
+                            $ref_user_id = Wo_UserIdFromUsername($_SESSION['ref']);
+                            if (!empty($ref_user_id) && is_numeric($ref_user_id)) {
+                                $account_data['referrer'] = Wo_Secure($ref_user_id);
+                                $account_data['src']      = Wo_Secure('Referrer');
+                                if ($wo['config']['affiliate_level'] < 2) {
+                                    $update_balance      = Wo_UpdateBalance($ref_user_id, $wo['config']['amount_ref']);
+                                }
+                                unset($_SESSION['ref']);
+                            }
+                        }
+                        elseif (!empty($_SESSION['ref']) && $wo['config']['affiliate_type'] == 1) {
+                            $ref_user_id = Wo_UserIdFromUsername($_SESSION['ref']);
+                            if (!empty($ref_user_id) && is_numeric($ref_user_id)) {
+                                $account_data['ref_user_id']      = Wo_Secure($ref_user_id);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($wo['config']['auto_username'] == 1) {
+            $account_data['first_name'] = Wo_Secure($_POST['first_name']);
+            $account_data['last_name'] = Wo_Secure($_POST['last_name']);
+        }
+
         $register     = Wo_RegisterUser($account_data);
         if ($register === true) {
+            if (!empty($account_data['referrer']) && is_numeric($wo['config']['affiliate_level']) && $wo['config']['affiliate_level'] > 1) {
+                $user_id = Wo_UserIdFromUsername($username);
+                AddNewRef($account_data['referrer'],$user_id,$wo['config']['amount_ref']);
+            }
+            if (!empty($wo['config']['auto_friend_users'])) {
+                $autoFollow = Wo_AutoFollow(Wo_UserIdFromUsername($_POST['username']));
+            }
+            if (!empty($wo['config']['auto_page_like'])) {
+                Wo_AutoPageLike(Wo_UserIdFromUsername($_POST['username']));
+            }
+            if (!empty($wo['config']['auto_group_join'])) {
+                Wo_AutoGroupJoin(Wo_UserIdFromUsername($_POST['username']));
+            }
+            
             if ($activate == 1) {
                 $access_token        = sha1(rand(111111111, 999999999)) . md5(microtime()) . rand(11111111, 99999999) . md5(rand(5555, 9999));
                 $time                = time();
                 $user_id             = Wo_UserIdFromUsername($username);
-                $create_access_token = mysqli_query($sqlConnect, "INSERT INTO " . T_APP_SESSIONS . " (`user_id`, `session_id`, `platform`, `time`) VALUES ('{$user_id}', '{$access_token}', 'phone', '{$time}')");
+                $device_type = 'phone';
+                if (!empty($_POST['device_type']) && in_array($_POST['device_type'], array('phone','windows'))) {
+                    $device_type = Wo_Secure($_POST['device_type']);
+                }
+                $create_access_token = mysqli_query($sqlConnect, "INSERT INTO " . T_APP_SESSIONS . " (`user_id`, `session_id`, `platform`, `time`) VALUES ('{$user_id}', '{$access_token}', '{$device_type}', '{$time}')");
                 if ($create_access_token) {
                     $response_data = array(
                         'api_status' => 200,
                         'access_token' => $access_token,
-                        'user_id' => $user_id
+                        'user_id' => $user_id,
+                        'user_platform' => $device_type,
                     );
                 }
             } elseif ($wo['config']['sms_or_email'] == 'mail') {
@@ -134,6 +204,7 @@ if (empty($error_code)) {
                         'message' => 'Registration successful! We have sent you an sms, Please check your phone to verify your account.',
                         'user_id' => $user_id
                     );
+                    cache($user_id, 'users', 'delete');
                 } else {
                     $error_code    = 11;
                     $error_message = 'Error found while sending the verification sms, please try again later.';
@@ -142,6 +213,12 @@ if (empty($error_code)) {
             elseif ($wo['config']['sms_or_email'] == 'sms' && empty($_POST['phone_num'])) {
                 $error_code    = 12;
                 $error_message = 'phone_num can not be empty.';
+            }
+            if (!empty($response_data)) {
+                $response_data['membership'] = false;
+                if ($wo['config']['membership_system'] == 1) {
+                    $response_data['membership'] = true;
+                }
             }
         }
     }

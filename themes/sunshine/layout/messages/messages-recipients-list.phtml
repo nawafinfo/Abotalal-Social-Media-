@@ -4,7 +4,7 @@ $message_count = Wo_CountMessages(array(
     'user_id' => $wo['recipient']['user_id']
 ));
 ?>
-<div class="messages-recipients-list mobileopenlist <?php echo ($wo['session_active_background'] == $wo['recipient']['user_id']) ? 'active' : ''; ?>" id="messages-recipient-<?php echo $wo['recipient']['user_id']; ?>" onclick="Wo_GetUserMessages(<?php echo $wo['recipient']['user_id']; ?>,'<?php echo $wo['recipient']['name']; ?>','<?php echo $wo['recipient']['username']; ?>');" title="<?php echo $wo['recipient']['name']; ?> 
+<div class="messages-recipients-list mobileopenlist <?php echo ((isset($wo['session_active_background']) ? $wo['session_active_background'] : 0) == $wo['recipient']['user_id']) ? 'active' : ''; ?>" id="messages-recipient-<?php echo $wo['recipient']['user_id']; ?>" onclick="Wo_GetUserMessages(<?php echo $wo['recipient']['user_id']; ?>,'<?php echo $wo['recipient']['name']; ?>','<?php echo $wo['recipient']['username']; ?>');" title="<?php echo $wo['recipient']['name']; ?> 
 (<?php echo Wo_Time_Elapsed_String($wo['recipient']['lastseen']); ?>)">
 	<span class="msg_ava_name" style="cursor:pointer;color:#555;">
 		<div class="<?php echo Wo_RightToLeft('pull-right');?>">

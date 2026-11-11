@@ -1,3 +1,4 @@
+DirectoryIndex index.php
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -29,13 +30,18 @@ RewriteRule ^go-pro$ index.php?link1=go-pro [NC,QSA]
 RewriteRule ^oops$ index.php?link1=oops [NC,QSA]
 RewriteRule ^user-activation$ index.php?link1=user-activation [NC,QSA]
 RewriteRule ^hashtag/([^\/]+)(\/|)$ index.php?link1=hashtag&hash=$1 [NC,QSA]
-RewriteRule ^follow-requests/(.*)$ index.php?link1=follow-requests[NC,QSA]
+RewriteRule ^follow-requests/(.*)$ index.php?link1=follow-requests [NC,QSA]
+RewriteRule ^reels/?$ index.php?link1=reels [NC,QSA]
+RewriteRule ^reels/([A-Za-z0-9_-]+)/?$ index.php?link1=reels&user=$1 [NC,QSA]
 RewriteRule ^p/([^\/]+)(\/|)$ index.php?link1=page&p=$1 [NC,QSA]
 RewriteRule ^g/([^\/]+)(\/|)$ index.php?link1=group&g=$1 [NC,QSA]
 RewriteRule ^home$ index.php?link1=home [QSA]
 RewriteRule ^404$ index.php?link1=404 [QSA]
 RewriteRule ^welcome(.*)$ index.php?link1=welcome [QSA,L]
 RewriteRule ^register(/?|)$ index.php?link1=register [QSA,L]
+RewriteRule ^login(/?|)$ index.php?link1=welcome [QSA,L]
+RewriteRule ^create-event(/?|)$ index.php?link1=create-event [NC,QSA]
+RewriteRule ^notifications(/?|)$ index.php?link1=notifications [NC,QSA]
 RewriteRule ^confirm-sms(/?|)$ index.php?link1=confirm-sms [QSA,L]
 RewriteRule ^confirm-sms-password(/?|)$ index.php?link1=confirm-sms-password [QSA,L]
 RewriteRule ^forgot-password(/?|)$ index.php?link1=forgot-password [QSA,L]
@@ -141,6 +147,7 @@ RewriteRule ^movies/watch/(\d+)(/?|)$ index.php?link1=watch-film&film-id=$1 [NC,
 RewriteRule ^ads(/?|)$ index.php?link1=ads [NC,QSA]
 RewriteRule ^wallet(/?|)$ index.php?link1=wallet [NC,QSA]
 RewriteRule ^send_money(/?|)$ index.php?link1=send_money [NC,QSA]
+RewriteRule ^create-ads(/?|)$ index.php?link1=create-ads [NC,QSA]
 RewriteRule ^ads/create(/?|)$ index.php?link1=create-ads [NC,QSA]
 RewriteRule ^ads/edit/(\d+)(/?|)$ index.php?link1=edit-ads&id=$1 [NC,QSA]
 RewriteRule ^ads/chart/(\d+)(/?|)$ index.php?link1=chart-ads&id=$1 [NC,QSA]

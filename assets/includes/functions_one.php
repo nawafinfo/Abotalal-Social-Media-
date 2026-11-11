@@ -96,7 +96,7 @@ function Wo_GetPlatformFromUser_ID($user_id = 0) {
     $user_id = Wo_Secure($user_id);
     $query   = mysqli_query($sqlConnect, "SELECT `platform` FROM " . T_APP_SESSIONS . " WHERE `user_id` = '{$user_id}' ORDER BY `time` DESC LIMIT 1");
     $mysqli  = mysqli_fetch_assoc($query);
-    return $mysqli['platform'];
+    return (!empty($mysqli) && isset($mysqli['platform'])) ? $mysqli['platform'] : '';
 }
 function Wo_SaveTerm($update_name, $value) {
     global $wo, $config, $sqlConnect;
@@ -143,7 +143,7 @@ function Wo_LangsFromDB($lang = 'english') {
     $data  = array();
     $query = mysqli_query($sqlConnect, "SELECT `lang_key`, `$lang` FROM " . T_LANGS);
     while ($fetched_data = mysqli_fetch_assoc($query)) {
-        $data[$fetched_data['lang_key']] = htmlspecialchars_decode($fetched_data[$lang]);
+        $data[$fetched_data['lang_key']] = htmlspecialchars_decode((string) $fetched_data[$lang]);
     }
     return $data;
 }
@@ -1487,7 +1487,7 @@ function Wo_FeaturedUsersAPI($limit = '', $offset = '') {
         }
     }
     if (!empty($pro_types)) {
-        $type_text = " AND `pro_type` IN (".implode($pro_types, ',').")";
+        $type_text = " AND `pro_type` IN (".implode(',', $pro_types).")";
     }
 
     $data           = array();
@@ -1516,7 +1516,7 @@ function Wo_FeaturedUsers($limit = '', $type = '') {
         }
     }
     if (!empty($pro_types)) {
-        $type_text = " AND `pro_type` IN (".implode($pro_types, ',').")";
+        $type_text = " AND `pro_type` IN (".implode(',', $pro_types).")";
     }
 
     $data           = array();
@@ -4224,7 +4224,7 @@ function Wo_ShareFile($data = array(), $type = 0, $crop = true) {
     if ($file_extension == 'jpg' || $file_extension == 'jpeg' || $file_extension == 'png' || $file_extension == 'gif') {
         $folder   = 'photos';
         $fileType = 'image';
-    } else if ($file_extension == 'mp4' || $file_extension == 'mov' || $file_extension == 'webm' || $file_extension == 'flv') {
+    } else if ($file_extension == 'mp4' || $file_extension == 'mov' || $file_extension == 'webm' || $file_extension == 'flv' || $file_extension == 'mkv' || $file_extension == 'avi' || $file_extension == 'mpeg' || $file_extension == 'mpg' || $file_extension == 'm4v' || $file_extension == '3gp' || $file_extension == 'ogv') {
         $folder   = 'videos';
         $fileType = 'video';
     } else if ($file_extension == 'mp3' || $file_extension == 'wav') {
@@ -4242,8 +4242,13 @@ function Wo_ShareFile($data = array(), $type = 0, $crop = true) {
         $mime_types = explode(',', str_replace(' ', '', $wo['config']['mime_types'] . ',application/json,application/octet-stream,image/svg+xml'));
     }
     
-    if (!in_array($data['type'], $mime_types)) {
-        return false;
+    $upload_mime = !empty($data['type']) ? strtolower($data['type']) : '';
+    if (!in_array($data['type'], $mime_types) && !in_array($upload_mime, $mime_types)) {
+        $video_exts = array('mp4', 'mov', 'webm', 'flv', 'mkv', 'avi', 'mpeg', 'mpg', 'm4v', '3gp', 'ogv');
+        $ok_video_mime = ($upload_mime === '' || $upload_mime === 'application/octet-stream' || strpos($upload_mime, 'video/') === 0);
+        if (!($fileType === 'video' && in_array($file_extension, $video_exts) && $ok_video_mime)) {
+            return false;
+        }
     }
     $dir         = "upload/{$folder}/" . date('Y') . '/' . date('m');
     $filename    = $dir . '/' . Wo_GenerateKey() . '_' . date('d') . '_' . md5(time()) . "_{$fileType}.{$file_extension}";
@@ -4300,6 +4305,7 @@ function Wo_DisplaySharedFile($media, $placement = '', $cache = false) {
     $wo['media']['name']        = Wo_Secure($media['name']);
     $wo['media']['type']        = $media['type'];
     $wo['media']['storyId']     = @$media['storyId'];
+    $wo['media']['mime']        = function_exists('wo_video_mime') ? wo_video_mime($media['filename']) : 'video/mp4';
     $wo['is_video_ad']          = '';
     $wo['wo_ad_media']          =    '';
     $wo['wo_ad_url']            = '';
@@ -4370,7 +4376,7 @@ function Wo_DisplaySharedFile($media, $placement = '', $cache = false) {
             else {
                 $t_users    = T_USERS;
                 $lats_ad_id = (!empty($_GET['ad_id']) && is_numeric($_GET['ad_id'])) ? $_GET['ad_id'] : false;
-                $con_list   = implode(',', $wo['ad-con']['ads']);
+                $con_list   = wo_implode_list(isset($wo['ad-con']['ads']) ? $wo['ad-con']['ads'] : array());
 
                 if ($con_list) {
                     $db->where(" `id` NOT IN ({$con_list}) ");
@@ -4478,6 +4484,7 @@ function Wo_CheckIfUserCanPost($num = 10) {
     if ($sql_query['count'] > $num) {
         return false;
     }
+    return true;
 }
 function Wo_CheckIfUserCanRegister($num = 10) {
     global $wo, $sqlConnect;
@@ -4744,6 +4751,12 @@ function Wo_RegisterPost($re_data = array('recipient_id' => 0)) {
         if (Wo_IsPageOnwer($re_data['page_id'])) {
             $re_data['user_id'] = 0;
         }
+    }
+    if (function_exists('wo_filter_table_columns')) {
+        $re_data = wo_filter_table_columns(T_POSTS, $re_data);
+    }
+    if (empty($re_data)) {
+        return false;
     }
     $fields  = '`' . implode('`, `', array_keys($re_data)) . '`';
     $data    = '\'' . implode('\', \'', $re_data) . '\'';
@@ -5419,7 +5432,7 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'after_post_id' => 0, '
         $query_text .= " AND (`postPrivacy` <> '3' OR (`user_id` = {$logged_user_id} AND `postPrivacy` >= '0'))";
         $query_text .= " AND `postShare` NOT IN (1)";
         if (!empty($groups_not_joined)) {
-            $implode_groups = implode($groups_not_joined, ',');
+            $implode_groups = implode(',', $groups_not_joined);
             $query_text .= " AND `group_id` NOT IN ($implode_groups)";
         }
         switch ($data['filter_by']) {
@@ -5437,6 +5450,9 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'after_post_id' => 0, '
                 break;
             case 'video':
                 $query_text .= " AND (`postYoutube` <> '' OR `postVine` <> '' OR `postFacebook` <> '' OR `postDailymotion` <> '' OR `postVimeo` <> '' OR `postPlaytube` <> '' OR `postFile` LIKE '%_video%')";
+                break;
+            case 'local_video':
+                $query_text .= " AND `postFile` LIKE '%_video%'";
                 break;
             case 'maps':
                 $query_text .= " AND `postMap` <> ''";
@@ -5479,7 +5495,12 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'after_post_id' => 0, '
     }
 
     if (isset($data['order'])) {
-        $query_text .= " ORDER BY `id` " . Wo_Secure($data['order']) . " LIMIT {$limit}";
+        $order_by = strtolower((string) $data['order']);
+        if ($order_by === 'rand' || $order_by === 'random') {
+            $query_text .= " ORDER BY RAND() LIMIT {$limit}";
+        } else {
+            $query_text .= " ORDER BY `id` " . Wo_Secure($data['order']) . " LIMIT {$limit}";
+        }
     } else {
         $query_text .= " ORDER BY `id` DESC LIMIT {$limit}";
     }

@@ -45,6 +45,26 @@ textarea.postText {
     float: right;
     margin-left: 10px;
 }
+.round-check input+label:after, .round-check input+label:before {
+  position: relative !important;
+  margin-left: 12px;
+  top: 3px !important;
+  left: -2px !important;
+}
+.round-check input+label:after {
+  right: 5px !important;
+  top: 7px !important;
+  left: auto !important;
+  position: absolute !important;
+}
+#poll-form .publisher-hidden-option.answers > span svg {
+  right:auto !important;
+  left: 5px !important;
+}
+.notifications-dropdown .turn-off-sound span {
+  display: block;
+  text-align: right;
+}
 .modal-title, .modal-body {
     text-align: right;
 }
@@ -71,7 +91,7 @@ textarea.postText {
 }
 .user-fetch .user-information {
     margin-right: 100px !important;
-    margin-left:auto !important; 
+    margin-left:auto !important;
 }
 .user-fetch .user-name {
     margin-right: 10px !important;
@@ -317,6 +337,12 @@ strong {
 #wo_comment_combo .comment_combo_footer .wo_comment_fopt {
     text-align: end !important;
 }
+#wo_comment_combo .comment_combo_footer .wo_comment_fopt > .pull-right {
+	float: left !important;
+}
+#wo_comment_combo .comment_combo_footer .wo_comment_fopt .btn svg {
+    transform: scaleX(-1);
+}
 .event_invite_frnd input{
     padding-left: 10px;
     padding-right: 40px;
@@ -351,7 +377,7 @@ strong {
     margin: -4px -2px 0px 5px !important;
 }
 .wo_settings_page .setting-panel-mdbtn svg.feather{
-    margin: -2px 0px 0px 5px !important;    
+    margin: -2px 0px 0px 5px !important;
 }
 .search-dropdown-result .search-user-avatar img{
     margin: 2px 0px 0px 10px !important;
@@ -389,7 +415,7 @@ strong {
     margin: 2px 0px 0px -9px !important;
     float: left !important;
 }
-.left-sidebar ul li a svg {
+.left-sidebar ul li a svg, .left-sidebar ul li a img {
     margin-right: 0px !important;
     margin-left: 10px;
 }
@@ -518,6 +544,7 @@ body .wo_page_profile .page-info-cont .page_navbar {
 .reactions-box {
     right: -10px;
 }
+.wow_lightbox_right .reactions-box {right: 10px;}
 .reaction {
     float: right !important;
 }
@@ -584,10 +611,6 @@ body .who_react_to_this_user .avatar .wo_who_react_this {
     left: -4px !important;
 }
 body .who_react_to_this_user .user-follow-button {
-    margin-left: 0;
-    margin-right: auto;
-}
-body #night_mode_toggle svg, body #keyboard_shortcut svg {
     margin-left: 0;
     margin-right: auto;
 }
@@ -799,10 +822,10 @@ body .chat_main {
 	right: auto;left: 270px;
 }
 body .chat_main:nth-child(2) {
-	right: auto;left: 570px;
+	right: auto;left: 585px;
 }
 body .chat_main:nth-child(3) {
-	right: auto;left: 870px;
+	right: auto;left: 900px;
 }
 body .wow_chat_hdr_usr .avatar {
     margin-right: 0;margin-left: 8px;
@@ -877,11 +900,11 @@ body .friends_nearby_status_ul li, #search-nearby-users .nearby-users-gender-col
 body .wow_pop_gam_list .avatar {
     margin-right: 0px;margin-left: 10px;
 }
-body .wow_pop_gam_list .game-name, body .wow_pop_gam_list p, body .wow_dev_apps .ap_name {
+body .wow_pop_gam_list .game-name, body .wow_pop_gam_list p {
 	margin-left: 0px;margin-right: 70px;
 }
 body .wow_dev_apps .ap_hdr .avatar {
-    margin-right: 0;margin-left: 10px;
+    margin-right: 0;margin-left: 15px;
 }
 body .wow_main_float_head > .container.wo_go_pro:after {
 	right: auto;left: 0;
@@ -896,9 +919,6 @@ body .create_head_menu:before {
 }
 body .head_name_links {
     margin-left: 0;margin-right: 8px;
-}
-body .wow_movie_filter {
-    margin-left: 0;margin-right: auto;
 }
 body .wow_movie_infos .mve_nfo {
     padding-left: 0;padding-right: 20px;
@@ -939,16 +959,6 @@ body .wow_usr_steps_cont .btn {
 body .wow_sett_sidebar > ul > li > a svg {
     margin: auto 0 auto 13px;
 }
-.wow_sett_sidebar .wow_sett_submenu > ul {
-	border-left: 0 !important;
-    border-right: 1px solid #e3e3e3;
-    margin-left: 0 !important;
-    margin-right: 23px !important;
-    padding-right: 23px;
-}
-body .wow_side_loggd_usr_hdr {
-    padding-left: 0;padding-right: 53px;
-}
 body .wow_side_loggd_usr_hdr .avatar {
     left: auto;
     right: 0;
@@ -988,7 +998,7 @@ body .wow_post_usr_ava span {
     left: -4px;
 }
 body .options .total-votes {
-    right: auto;left: 12px;
+    right: auto;left: 0;
 }
 body .wo_votes .answer-vote {
     right: auto;left: 0;
@@ -1002,13 +1012,6 @@ body .wow_post_prod_infos {
 body .wow_post_prod_infos > svg {
     left: auto;right: 0;
 }
-body .active_sessions .as_list .platform_icon {
-    margin-right: 0;margin-left: 15px;
-    float: right;
-}
-body .active_sessions .as_list .log_out_session {
-    float: left;
-}
 body .earn_points .ep_illus .ep_how_many svg {
     margin: 0 0 0 15px;
 }
@@ -1021,7 +1024,7 @@ body .earn_points .ep_illus .ep_how_many svg {
 }
 
 body .comment-reply .wo_commreply_combo .textarea {
-	padding-left: 80px;
+	padding-left: 120px;
     padding-right: 10px;
 }
 body .comment-reply .wo_commreply_combo .image-comment {
@@ -1048,6 +1051,27 @@ body .greetalert .close {
 body .invite-user-form button svg {
 	transform: rotate(180deg);
 }
+
+body .navbar-default .dropdown-menu li a svg {
+    margin: -3px 2px 0 15px;
+}
+.wo_blogcomm_combo button svg {
+	transform: scaleX(-1);
+}
+body .greetalert {border-left: 0;border-right: 2.5px solid;}
+body .text-sender-container .outgoing .message-model {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+body .vid_procss_alrt > span {
+    right: auto;
+    left: 10px;
+}
+.chat-messages-wrapper .outgoing .wo_chat_story {
+	margin-left: 0;margin-right: auto;
+}
+#poll-form .publisher-hidden-option.answers > span svg {right: auto;left: 5px;}
 
 
 
@@ -1117,9 +1141,12 @@ body .wo_imagecombo_lbox.story_lightbox .story_image_owner {
 }
 }
 @media (max-width: 600px) {
-    .profile-container .card {
-        border-bottom-right-radius: 3px !important;
-    }
+.profile-container .card {
+	border-bottom-right-radius: 3px !important;
+}
+body .text-sender-container .msg_usr_info_top_list .msg_usr_cht_opts_btns > span {
+    margin-right: 0 !important;margin-left: 4px !important;
+}
 }
 @media (max-width: 570px){
 .wo_loading_post_child {
@@ -1155,5 +1182,187 @@ body .wo_imagecombo_lbox.story_lightbox .story_image_owner {
 @media (max-width: 345px){
 .post .post-footer .comments-list .reply .comment-body .reactions-box {
     right: -30px;
+}
+}
+
+
+
+
+body .pr_stars .star {margin: 0 0 0 2px;}
+body .reviewMeta--author-avatar { margin-right: 0; margin-left: 10px; }
+
+body .pr_stars .star {margin: 0 0 0 2px;}
+body .reviewMeta--author-avatar { margin-right: 0; margin-left: 10px; }
+body .ch_checkout_title::after {left: auto;right: 0;}
+body .ch_cart .ch_title {padding-left: 0;padding-right: 45px;}
+body .ch_cart .ch_title h4 svg {left: auto;right: 0;}
+body .ch_main_items .prod_img > div {right: auto;left: 7px;}
+body .ch_main_items .prod_img > .btn {left: auto;right: 7px;}
+body .ch_main_items .closed {right: auto;left: 10px;}
+body .ch_total_price > svg {left: auto;right: -25px;transform: scale(-1) scaleX(-1);}
+body .cart_chos_addrs label {padding: 10px 45px 10px 10px;}
+body .cart_chos_addrs label:before {left: auto;right: 10px;}
+body .cart_chos_addrs label:after {left: auto;right: 19px;transform: translate(-50%,-50%);}
+
+body .refs_caret::before {
+    left: auto;
+    right: 0;
+    transform: scale(-1);
+}
+body .referres .ref-image {
+    float: right;
+    margin-right: 0;margin-left: 10px;
+}
+body .refs_caret_down::before {
+    transform: scale(-1) rotate(-90deg);
+}
+body .wo_movie_head_filter > svg {
+    right: auto;left: 10px;
+}
+body .wo_page_profile .page-info-cont .page_navbar .dropdown-menu li svg, body .wo_user_profile .options-buttons .dropdown-menu li svg {margin: -2px 0 auto 10px;}
+
+body .wow_dev_apps .info {margin: 0 98px 0 0;}
+
+body .sun_pub_privacy_menu {
+    transform-origin: right top;left: auto;right: 0;
+}
+body .sun_pub_privacy_dropdown > svg {
+    margin-left: 0;margin-right: 3px;
+}
+body .sun_pub_name {
+    margin: 0 50px 10px 0px;
+}
+body .publisher-box textarea.postText {
+    padding: 63px 50px 10px 35px;
+}
+body.pub-focus .publisher-box textarea.postText {
+    padding: 16px 50px 10px 35px;
+}
+
+body .explore_hdr .circle_one {
+    left: auto;right: 120px;
+}
+body .explore_hdr .circle_two {
+    right: auto;left: -20px;
+}
+bosy .insta#wo_post_stat_button .stat-item:last-child {
+    margin-left: 0;margin-right: auto;
+}
+body .wo_user_profile.insta .user-bottom-nav {
+    margin: 0 auto 0 20px;
+}
+body .insta_post_filter ul > li:first-child {
+	margin-left: 0;margin-right: auto;
+}
+body .insta_post_filter ul > li:last-child {
+	margin-right: 0;margin-left: auto;
+}
+body .post .post-description .post-actions .stat-item svg{margin-right: 0;margin-left: 2px;}
+
+body .wo_sett_noti .round-check input+label svg {
+    margin: -1px 0 0 5px;
+}
+body .wo_sett_noti .round-check input+label:after, body .wo_sett_noti .round-check input+label:before {
+	left: 14px !important;
+    right: auto !important;
+    position: absolute !important;margin: 16px 0 !important;
+}
+body .wo_sett_noti .round-check input+label:after {
+	right: auto !important;
+	left: 18px !important;
+}
+body .movies-comment-item-body {
+    margin-left: 0;
+    margin-right: 55px;
+}
+body .movies-com-wrapper .movies-comlist-container .movies-comment-item .movies-comment-item-body div.comment-heading {
+    border-radius: 20px 0 20px 20px;
+}
+
+body .wow_usr_steps .upload-image svg {
+    right: auto;left: 10px;
+}
+
+body .wo_settings_page .avatar-holder::after {left: auto;right: 74px;}
+
+body .wow_usr_steps_cont .btn svg {
+	margin: 0 7px 0 0;
+}
+body .movies-com-wrapper .movies-comlist-container .movies-comment-item .movies-comment-item-body div.comment-heading .del-movies-comment {
+	margin-left: 0;margin-right: 10px;
+}
+
+
+body .lang_select_modal .language_info svg {
+    right: auto;left: 0;
+}
+
+body #wo_msg_right_prt .message-option-btns .btn.messages-rtime {padding: 8px 10px 8px 36px !important;}
+
+body .wow_sett_sidebar > ul > li > a span {
+    margin: auto 0 auto 13px;
+}
+
+
+@media (min-width: 992px) {
+body .wo_new_sett_sidee {
+	padding-left: 15px;padding-right: 15px;
+}
+body .wo_new_sett_pagee {
+	padding-left: 15px;padding-right: 0;
+}
+}
+
+@media (min-width: 1300px) {
+#wo_home_search {
+	margin-right: 20px;margin-left: auto;
+}
+}
+
+@media (max-width: 1320px) {
+body .search-container .search-input {
+    width: 300px;
+}
+}
+
+
+body .new-feature{
+    right: auto;
+    left: 4px;
+}
+body .ai_alert_img {
+    left: auto;
+	right: 0;
+}
+
+body .ai_alert_images label span.ai_image_abs:before {
+    right: auto;
+    left: 8px;
+}
+body .ai_alert_images label span.ai_image_abs:after {
+    right: auto;
+    left: 12px;
+}
+
+body .ai_alert_images label {
+    right: auto;
+    left: 0;
+}
+
+body .wo_reels_cont .story-img .reels-previous-btn, body .wo_reels_cont .story-img .reels-next-btn {
+    left: 40px;
+    right: auto;
+}
+body .btn-delete-reel {
+    right: auto;left: -70px;
+}
+
+
+@media (max-width:800px) {
+body .wo_reels_cont .video-text-overlay, body .btn-delete-reel {
+    right: auto;left: 10px;
+}
+body .video-post-text-overlay {
+    padding-right: 15px;padding-left: 70px;
 }
 }

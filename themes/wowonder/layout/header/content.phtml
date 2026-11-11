@@ -2,16 +2,42 @@
 	<nav class="header-fixed1000">
 		<div class="container-fluid">
 			<div class="wow_hdr_innr_left">
+				<?php if ($wo['loggedin'] == true) { ?>
+				<a href="javascript:void(0);" class="fb-mobi-burger" onclick="var m=$('#head_menu_rght > li.dropdown').last(); m.toggleClass('open'); return false;" title="Menu">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+				</a>
+				<?php } ?>
 				<a class="brand header-brand" href="<?php echo $wo['config']['site_url']; ?>">
+					<span class="fb-logo-mark">A</span>
+					<span class="fb-wordmark">ABOTALAL</span>
 					<img width="130" src="<?php echo $wo['config']['theme_url'];?>/img/logo.<?php echo $wo['config']['logo_extension'];?>" alt="<?php echo $wo['config']['siteName'];?> Logo"/>
 				</a>
 				<?php if ($wo['loggedin'] == true) { ?>
-					<ul class="nav navbar-nav">
-						<li>
-							<a class="sixteen-font-size" href="<?php echo $wo['config']['site_url']; ?>" data-ajax="?index.php?link1=home">
+					<ul class="nav navbar-nav fb-hdr-center">
+						<li class="fb-nav-home">
+							<a class="sixteen-font-size" href="<?php echo $wo['config']['site_url']; ?>" data-ajax="?index.php?link1=home" title="<?php echo $wo['lang']['home']; ?>">
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M19 21H5a1 1 0 0 1-1-1v-9H1l10.327-9.388a1 1 0 0 1 1.346 0L23 11h-3v9a1 1 0 0 1-1 1zm-6-2h5V9.157l-6-5.454-6 5.454V19h5v-6h2v6z" fill="currentColor"/></svg>
 							</a>
 						</li>
+						<li class="fb-nav-reels">
+							<a class="sixteen-font-size" href="<?php echo Wo_SeoLink('index.php?link1=reels'); ?>" data-ajax="?link1=reels" title="Reels">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z" fill="currentColor"/></svg>
+							</a>
+						</li>
+						<?php if ($wo['config']['groups'] == 1) { ?>
+						<li class="fb-nav-groups">
+							<a class="sixteen-font-size" href="<?php echo Wo_SeoLink('index.php?link1=groups'); ?>" data-ajax="?link1=groups" title="<?php echo $wo['lang']['groups']; ?>">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="currentColor"/></svg>
+							</a>
+						</li>
+						<?php } ?>
+						<?php if ($wo['config']['pages'] == 1) { ?>
+						<li class="fb-nav-pages">
+							<a class="sixteen-font-size" href="<?php echo Wo_SeoLink('index.php?link1=pages'); ?>" data-ajax="?link1=pages" title="<?php echo $wo['lang']['pages']; ?>">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm1 9H9v-1h6v1zm4 4H9v-1h10v1zm0 4H9v-1h10v1zM13 3.5L18.5 9H13V3.5z" fill="currentColor"/></svg>
+							</a>
+						</li>
+						<?php } ?>
 						<?php if ($wo['config']['user_ads'] == 1 || Wo_CanBlog() == true || $wo['config']['events'] == 1 || $wo['config']['groups'] == 1 || $wo['config']['pages'] == 1) {  ?>
 							<li class="dropdown head_name_links">
 								<a href="#" class="dropdown-toggle sixteen-font-size btn-main" data-toggle="dropdown" role="button" aria-expanded="false">

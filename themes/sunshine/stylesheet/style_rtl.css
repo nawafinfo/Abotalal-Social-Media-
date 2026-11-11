@@ -5,9 +5,6 @@
     left: 0 !important;
     right: auto !important;
 }
-.panel .meta {
-    margin-right: 22px;
-}
 .sidebar-conatnier .profile-style .card.hovercard .info .title {
     left: -90px;
 }
@@ -21,11 +18,6 @@ textarea.postText {
 .profile-icon {
     margin-right: 0 !important;
     margin-left: 5px;
-}
-.header-brand {
-    float: right !important;
-    margin-right: 0 !important;
-    margin-left: 30px;
 }
 .events-list-name {
     left:auto !important;
@@ -42,21 +34,33 @@ textarea.postText {
     left: 0px !important;
     right: auto !important;
 }
-.emo-message {
+/*.emo-message {
     left: 92px !important;
     right: auto !important;
-}
-.text-sender-container textarea {
-    padding-right: 10px !important;
-    padding-left: 140px !important;
-}
-.emo-message-container {
-    left: 0 !important;
-    right: auto !important;
-}
+}*/
 .wowonder-well img {
     float: right;
     margin-left: 10px;
+}
+.round-check input+label:after, .round-check input+label:before {
+  position: relative !important;
+  margin-left: 12px;
+  top: 3px !important;
+  left: -2px !important;
+}
+.round-check input+label:after {
+  right: 5px !important;
+  top: 7px !important;
+  left: auto !important;
+  position: absolute !important;
+}
+#poll-form .publisher-hidden-option.answers > span svg {
+  right:auto !important;
+  left: 5px !important;
+}
+.notifications-dropdown .turn-off-sound span {
+  display: block;
+  text-align: right;
 }
 .modal-title, .modal-body {
     text-align: right;
@@ -75,15 +79,20 @@ textarea.postText {
 .home-sidebar.profile-style .user-follow-btn{
    padding-left: 10px;
 }
-body .post .post-heading .avatar {
-    margin-right: -32px;margin-left: 0;
-}
 .post-fetched-url img {
     margin-right: 0 !important;
     margin-left: 10px !important;
 }
+.user-fetch .user-information {
+    margin-right: 100px !important;
+    margin-left:auto !important;
+}
+.user-fetch .user-name {
+    margin-right: 10px !important;
+}
 .pin-icon {
     left: 11px;
+
 }
 .search-dropdown-container {
     margin-right: 15px !important;
@@ -94,6 +103,7 @@ body .post .post-heading .avatar {
 .messages-container {
     overflow-x: hidden;
 }
+
 .profile-cover-changer .btn-file {
     float: right !important;
 }
@@ -103,18 +113,6 @@ body .post .post-heading .avatar {
 }
 .chat-container input {
     border-right: 0 !important;
-}
-body .chat_main {
-    left: 215px ;
-    right: auto ;
-}
-body .chat_main:nth-child(2) {
-    left: 480px ;
-    right: auto ;
-}
-body .chat_main:nth-child(3) {
-    left: 745px ;
-    right: auto;
 }
 .chat-user-desc .col-sm-4 {
     padding-right: 15px !important;
@@ -147,8 +145,9 @@ body .chat_main:nth-child(3) {
 .chat-textarea .input-group-btn {
     left: 30px;
 }
-b, strong {
-    margin-left: 7px ;
+b,
+strong {
+    margin-left: 7px !important;
 }
 .search-container .search-input,
 .post-footer .form-control.textarea,
@@ -160,14 +159,6 @@ b, strong {
     left: 0 !important;
     right: auto;
 }
-.messages-recipients-list img {
-    margin-left: 5px;
-}
-.recipient-chat-user img {
-	margin-right: 5px;
-    margin-left: 10px;
-}
-
 .filter-text {
     font-size: 14px !important;
 }
@@ -177,14 +168,11 @@ b, strong {
 .publisher-box .charsLeft-post {
     margin-right: 5px;
 }
-.chat-opacity {
-    width: 190px !important;
-}
 .post .post-heading .meta .title a b {
-    font-size: 13px;
+    margin: 0 !important;
 }
 .post .post-heading .meta .title a {
-    margin-right: 0px !important;
+    margin: 0px !important;
 }
 .post .post-footer .comments-list .comment .avatar {
     margin-left: 10px !important;
@@ -192,6 +180,13 @@ b, strong {
 .post .post-footer .comments-list .comment .comment-body {
     margin-left: 0px !important;
     margin-right: 50px !important;
+}
+.user-fetch .user-avatar {
+    margin-right: 5px;
+}
+.user-fetch .user-name {
+    left: auto !important;
+    right: 30%;
 }
 .activities-wrapper * {
     font-size: 11px;
@@ -298,7 +293,7 @@ b, strong {
     margin-left:0px !important;
     margin-right: 10px;
 }
-.read-blog .blog-author-info .media-body .user-follow-button .btn svg.feather{
+.my_pages_header .btn-success a svg.feather, .read-blog .blog-author-info .media-body .user-follow-button .btn svg.feather{
     margin: -3px -5px 0px 4px !important;
 }
 .wo-create-forms .wo_create_form_cover span a{
@@ -318,14 +313,14 @@ b, strong {
 }
 .main-blog-sidebar .popular-articles li .article-title, .main-blog-sidebar .popular-articles li .article-info{
     margin-left: 0px !important;
-    margin-right: 95px;
+    margin-right: 80px;
 }
 .chat-textarea .chat-btns-w .ball-pulse{
     float: left !important;
 }
 .chat-textarea .chat-btns-w .record_timei{
-    right: auto !important;
-    left: 6px;
+    left: auto !important;
+    right: -11px;
 }
 #wo_comment_combo .textarea {
     padding-right: 10px !important;
@@ -335,6 +330,12 @@ b, strong {
 }
 #wo_comment_combo .comment_combo_footer .wo_comment_fopt {
     text-align: end !important;
+}
+#wo_comment_combo .comment_combo_footer .wo_comment_fopt > .pull-right {
+	float: left !important;
+}
+#wo_comment_combo .comment_combo_footer .wo_comment_fopt .btn svg {
+    transform: scaleX(-1);
 }
 .event_invite_frnd input{
     padding-left: 10px;
@@ -363,14 +364,14 @@ b, strong {
 .container .wo_group_profile .side_panel .box-inner {
     left: auto !important;
 }
-body .right_user_info li svg.feather{
-    margin: -2px 0px 0px 8px;
+.right_user_info li svg.feather{
+    margin: -3px 2px 0px 6px !important;
 }
 .widget-heading svg.feather{
     margin: -4px -2px 0px 5px !important;
 }
 .wo_settings_page .setting-panel-mdbtn svg.feather{
-    margin: -2px 0px 0px 5px !important;    
+    margin: -2px 0px 0px 5px !important;
 }
 .search-dropdown-result .search-user-avatar img{
     margin: 2px 0px 0px 10px !important;
@@ -408,10 +409,7 @@ body .right_user_info li svg.feather{
     margin: 2px 0px 0px -9px !important;
     float: left !important;
 }
-.movies-search {
-    float: left !important;
-}
-.left-sidebar ul li a svg {
+.left-sidebar ul li a svg, .left-sidebar ul li a img {
     margin-right: 0px !important;
     margin-left: 10px;
 }
@@ -422,19 +420,12 @@ body .right_user_info li svg.feather{
 .slide-film-desc svg.feather {
     margin: -2px -5px 0px 2px !important;
 }
-.wo_page_profile .page-info-cont .page_navbar {
-    margin: 30px -20px -15px -15px !important;
-    background: linear-gradient(to right,#f5f5f5,#fff) !important;
+body .wo_page_profile .page-info-cont .page_navbar {
+    margin: 30px -20px -15px -15px;
+    background: linear-gradient(to right,#f5f5f5,#fff);
 }
 .wo_search_page .nav-tabs li a svg.feather {
     margin: -3px -1px 0px 3px !important;
-}
-.wo_user_side_info li {
-    border-right: 0 !important;
-    border-left: 1px solid #e9e9e9;
-}
-.wo_user_side_info li:last-child {
-    border-left: 0px;
 }
 .user-status-home ul.status-list {
     padding-right: 0;
@@ -547,6 +538,7 @@ body .right_user_info li svg.feather{
 .reactions-box {
     right: -10px;
 }
+.wow_lightbox_right .reactions-box {right: 10px;}
 .reaction {
     float: right !important;
 }
@@ -568,8 +560,9 @@ body .right_user_info li svg.feather{
 #comment_reacted {
     float: right !important;
 }
-.search-container .inner-addon .glyphicon {
-    margin: 5px 5px 5px 0 !important;
+body .search-container .inner-addon .glyphicon {
+    right: auto;
+    left: 0;
 }
 #inline_emo_react .wo_who_react_this .inline_act_emoji {
     margin: 0px !important;
@@ -592,385 +585,11 @@ body .right_user_info li svg.feather{
 #wo_msg_right_prt .msg_write_combo {
     padding-right: 0 !important;padding-left: 5px;
 }
-.wo_load_more > span {
-	margin-right: 0;margin-left: 7px;
-}
-.sun_head_onboard .sho_img {
-	left: auto;right: 30px;
-}
-.select_radio_btn label {
-    margin-right: 0 !important;
-    margin-left: 10px !important;
-}
-.select_radio_btn label:last-child {
-    margin: 0 !important;
-}
-body .fake_ad_post .fads_meta .fads_avatar {
-	float: right;
-	margin-right: 0px;margin-left: 10px;
-}
-body .fake_ad_post .fads_meta .fads_m_info {
-    margin-left: 0px;margin-right: 50px;
-}
-body .fake_ad_post .fads_cover .fcov_title svg {
-    left: auto;right: 0;
-}
-body .fake_ad_post .fads_cover .fcov_title input {
-    padding-left: 5px;padding-right: 25px;
-}
-body .sun_input > input:placeholder-shown:not(:focus) + label, body .sun_input > textarea:placeholder-shown:not(:focus) + label {
-    left: auto;
-    right: 7.5px;
-}
-body .sun_input > label {
-    left: auto;right: 0;
-}
-body .cool-style-album .album_parent .avatar .alb_count svg, body .cool-style-album .album_parent .avatar .albm_hover_bg .albm_hover_bg_list a svg {
-    margin-right: 0;margin-left: 5px;
-}
-body .sun_head_onboard.shortpwidth span.go_back_link {
-    right: auto;left: 10px;
-}
-body .sun_head_onboard.shortpwidth span.go_back_link a svg {
-    transform: rotate(180deg);
-}
-body .sun_blog_head {
-    /*right: 0;left: 205px;*/
-}
-body .create_blog_area_acombo > .th-alert {
-    border-right: 0px solid #e5e5e5;
-	border-left: 1px solid #e5e5e5;
-    padding: 10px 15px 10px 15px !important;
-}
-body .create_blog_area_acombo {
-    float: right;
-}
-body .create_blog_area_acombo .no-padding-right {
-    padding-right: 15px !important;padding-left: 0!important;
-}
-body .my_pages_header ul li {
-    margin-right: 0px;
-    margin-left: 3px;
-}
-body .my_pages_header ul li:last-child {
-    margin: 0;
-}
-body .my_pages_header ul.pull-left li a {
-	margin-right: 0 !important;margin-left: 8px;
-}
-body .wo_my_articlez .art-title {
-    margin: 0px 15px 5px 0px;
-}
-body .wo_my_articlez .blog-meta-desc{
-	margin: 0px 15px 0px 0px;
-}
-body .wo_my_articlez .post-options {
-    margin: 10px 15px 0 0px;
-}
-body .main-blog-sidebar .popular-articles li .article-title {
-    margin: 6px 65px 6px 0;
-}
-body .wo_sidebar_activity .sun_act_icon {
-    margin-right: 0;
-    margin-left: 10px;
-}
-body .chat-tab .online-toggle > .cht_tg_right_prt .dropdown-menu {
-	left: 0;
-    right: auto;
-}
-body .chat-opacity .text-center .empty_state svg.feather {
-    margin: -1px 0 0 5px;
-}
-body .sun_innr_comm:before, body .select-nearby-users-distance .currentVal:before {
-    left: auto;
-	right: -6px;    transform: rotate(180deg);
-}
-body .sun_comm_addmore {
-    margin-left: 0;
-    margin-right: 8px;
-}
-body .sun_comm_addmore > .dropdown-menu > li.emo {transform: translateX(-35px);}
-body .sun_comm_addmore > .dropdown-menu > li.img {transform: translateX(-72px);}
-body .wo_go_pro .col-md-4 img, body .wo_pro_features img {
-    margin: 30px auto 0 20px;
-}
-body .events-list-cover .event_cover .intrst_btn, body .wo_event_profile .profile-container .card.hovercard .cardheader .intrst_btn {
-    right: auto;left: 10px;
-}
-body .wo_event_profile .event-info-cont .options-btns, body .spop_head .pop_gams_arow, body .wo_my__groups .dropdown, body .wo_group_profile .side_panel .options-buttons, body #night_mode_toggle svg, body .wo_imagecombo_lbox .story-img .sun_light_tool .lbox_topbar_child.right, body .wo_market .market_bottom .market_bottom_header .dropdown {
-    margin-left: 0;margin-right: auto;
-}
-body .wo_event_profile .event-info-cont .info .short_start_dt, body .sun_lang_select_menu li a .language_initial, body .sun_thread_replies .thread-replies .t-left_prt, body .sun_find_friends .nearby_user_wrapper .sun_friends_fetrs li > span, body .sun_pop_games .sun_pop_gam_list .avatar, body .user-fetch .user-avatar {
-    margin-right: 0;margin-left: 10px;
-}
-body .topic_icon svg {
-    margin: 12px 10px 12px 0px;
-}
-body .sun_forum_sections table .forum-meta-d.topics {
-    padding-right: 10px !important;
-	padding-left: 20px !important;
-}
-body .sun_forum_sections table .forum-meta-d.posts {
-    padding-right: 10px !important;
-	padding-left: 65px !important;
-}
-body .sun_forum_sections .f_category b {
-    margin-right: 0;
-    margin-left: 20px;
-}
-body .sun_thread_head .forum_title {
-    text-align: right;
-}
-body .sun_thread_main_reply .t-left_prt {
-    float: right;
-    border-right: 0px solid #e5e5e5;
-	border-left: 1px solid #e5e5e5;
-    margin-right: 0;margin-left: 7px;
-}
-body .sun_thread_replies .thread-replies {
-    padding: 3px 62px 3px 3px;
-}
-body .sun_thread_replies .thread-replies .t-left_prt .avatar {
-    margin-left: 15px;
-    margin-right: auto;
-}
-body .sun_thread_replies .thread-replies .t-left_prt .avatar .btn {
-    left: auto;right: -60px;
-}
-body .sun_thread_replies .thread-replies .t-right_prt:before {
-    left: auto;right: -13px;transform: rotate(180deg);
-}
-body blockquote {
-	border-left: 0!important;
-    border-right: 2px solid #3d8cfa !important;
-}
-body .select-nearby-users-distance .currentVal {
-	margin-left: 0px;margin-right: 10px;
-}
-body .sun_find_friends .nearby_user_wrapper .sun_friends_fetrs{
-	text-align: right;
-}
-body .wo_my__groups .avatar {
-    margin-right: 0;margin-left: 12px;
-}
-.dropdown-menu-right {
-    left: 0;
-    right: auto;
-}
-body .wo_group_profile .side_panel .options-buttons {
-	    right: auto;    left: 10px;
-}
-body .sun_sett_sidebar > ul > li > a span {
-    margin: auto 0 auto 16px;
-}
-body #head_menu_rght .create_head_menu li a svg {
-    margin: auto 0 auto 13px;
-}
-body .navbar-default .dropdown-menu li a svg {
-    margin: -2px 0 0 12px;
-}
-body .navbar-nav.left_part_header .search-container .dropdown {
-    left: auto;
-	right: 50%;
-    transform: translateX(50%);
-}
-body .greetalert .close {
-    right: auto;
-    left: 4px;
-}
-body .sun_movies_list .movies-film-wrapper {
-    float: right;
-}
-body .sun_mv_info {
-        padding-right: 0px;    padding-left: 10px;
-}
-body .played-film-image-wrap {
-    padding: 15px 15px 15px 0;
-}
-body .rating {
-    float: right;
-    margin-left: 0;
-    margin-right: -5px;
-}
-body .rat_cnt {
-    margin: 0 4px 0 0;
-}
-body .rating > label {
-	float: left;
-}
-body .wo_page_profile .page-info-cont .first_row {
-    border-right: 0px solid #eaeaea;border-left: 1px solid #eaeaea;
-}
-body .wo_page_profile .options-buttons {
-    margin-left: 0px;margin-right: 20px;
-}
-body .wo_page_profile .page-info-cont .last_row {
-    padding-left: 15px;padding-right: 20px;
-}
-body .wo_sidebar_pages .page_middle .avatar {
-    margin-right: 0;margin-left: 9px;
-}
-body .wo_poke_users .poke_info .avatar {
-    margin-right: 0;margin-left: 9px;
-}
-body .products .product .product-image {
-    margin: 0 -3px 0 0;
-}
-body .wo_market .market_bottom .product .product-image .product-price {
-    left: auto;
-    right: 15px;
-}
-body .wo_sidebar_groups .user-follow-btn {
-    right: auto;left: 0px;
-}
-body .wo_sidebar_groups .group-header h3 a {
-    max-width: 160px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-}
-body .sun_srch_tp_filtr .dropdown .dropdown-menu {
-	transform-origin: right top;
-}
-body .order_by {
-    float: left;
-}
-.sun_htag .htag_top svg {
-    float: right;
-    margin-left: 5px;
-}
-body .sun_htag .htag_bottom {
-    padding-left: 0;
-}
-body .wo_sidebar_users .avatar {
-    margin-right: 0;margin-left: 10px;
-}
-body .ui.horizontal.divider:before {
-    margin-left: 0;
-    margin-right: calc(-49.2% - 1em);
-}
-body .user-status-home {
-    padding: 5px 10px 10px 0px;
-}
-body .user-status-home ul.status-list li {
-    margin-right: 0px;margin-left: 10px;
-}
-body .user-status-home ul.status-list li.create_new {
-    margin-right: 0px;margin-left: 6px;
-}
-body .sun_side_widget .sun_side_widget_title svg {
-    margin-right: 0;margin-left: 5px;
-}
-body .sun_post .post {
-    margin-left: 0px;margin-right: 10px;
-}
-body #wo_post_stat_button > .stat-item:first-child {
-    border-radius: 0 2em 2em 0;
-}
-body #wo_post_stat_button .dropdown .stat-item {
-    border-radius: 2em 0 0 2em;
-}
-body .sun_post .post-options {
-    transform-origin: left top;
-}
-body .sun_post .post-privacy-options {
-    transform-origin: right top;
-}
-body .sun_post .post-privacy-options li > div svg {
-    margin-right:0px;margin-left: 10px;
-}
-body .sun_pub_name {
-    margin: 0 50px 10px 0px;
-}
-body .publisher-box textarea.postText {
-    padding: 63px 50px 10px 35px;
-}
-body.pub-focus .publisher-box textarea.postText {
-    padding: 16px 50px 10px 35px;
-}
-/*body .sun_pub_mid_foot .poster-left-buttons {
-    margin-right: 0;margin-left: 7px;
-}*/
-body .sun_pub_privacy_menu {
-    transform-origin: right top;left: auto;right: 0;
-}
-body .sun_pub_privacy_dropdown > svg {
-    margin-left: 0;margin-right: 3px;
-}
-body .publisher-box .add-emoticons .dropdown-menu > div {
-    margin-right: 0;margin-left: -25px;
-}
-body #filterby-post li {
-    float: right;
-}
-body .sun_status {
-    right: auto;left: 15px;
-}
-body .sun_user_actions_item {
-    margin-left: 0;margin-right: 13px;
-}
-body .user_media_list_section .photo-data, body .user_media_list_section .video-data {
-    float: right;
-}
-body .sun_status.mini {
-    right: auto;left: 8px;
-}
 body .wo_imagecombo_lbox.story_lightbox .wo_story_header .wo_stor_h_opts {
     margin-left: 0;margin-right: auto;
 }
 body .wo_imagecombo_lbox.story_lightbox .wo_story_header .wo_stor_h_info .user-avatar, body .wo_imagecombo_lbox.story_lightbox .story_view_list .user-avatar {
     margin-right: 0;margin-left: 9px;
-}
-body .wo_imagecombo_lbox.story_lightbox .story_image_owner {
-    margin-right: 380px !important;
-    margin-left: 0;
-}
-body .wo_imagecombo_lbox.story_lightbox .comment-section {
-    right: 0;
-    left: auto;
-}
-body .post .post-heading .meta .title > span, body .post .post-heading .meta .title > svg, body .post .post-heading .meta .title > a, body .post .post-heading .meta .title > small {
-    float: right;
-    margin-right: 0;margin-left: 4px;
-}
-body .post .post-heading .meta .title > svg {
-	transform: rotate(180deg);
-}
-body .online-content-toggler {
-	margin-right: 0;margin-left: -17px;
-}
-body .chat_acts .activities-wrapper {
-	margin-right: 0;
-    margin-left: -17px;
-}
-body .boosted_post div {
-    margin-right: 0;margin-left: 7px;
-}
-body .user-status-home ul.status-list li.create_new a svg {
-left: auto;right: 5px;}
-body .sun_user_actions.mobi_show .dropdown .dropdown-menu, body .chat-container .chat-status .dropdown .dropdown-menu {
-	transform-origin: left top;
-}
-body .sun_user_actions.mobi_show .dropdown .sun_user_actions_item svg {
-    margin: 0px 0 0 12px;
-}
-body .chat-container .chat-status .dropdown .dropdown-menu li a svg {
-    margin: -2px -2px 0 4px;
-}
-.sun_lang_select_menu li a .language_initial {
-	margin-right: 0;margin-left: 10px;
-}
-body .sun_lang_select_menu {
-	right: auto !important;
-    left: 0 !important;
-}
-body .sun_lang_select_menu:before {
-	right: auto;left: 30px;
-}
-body .sun_sett_page .select_radio_btn.setting_down_info_btns .select_radio_btn_innr label {
-	margin-right: 0 !important; 
-    margin-left: 0 !important;
 }
 body .who_react_to_this_user .avatar {
     margin-right: 0;margin-left: 15px;
@@ -981,6 +600,74 @@ body .who_react_to_this_user .avatar .wo_who_react_this {
 body .who_react_to_this_user .user-follow-button {
     margin-left: 0;
     margin-right: auto;
+}
+body #night_mode_toggle svg, body #keyboard_shortcut svg {
+    margin-left: 0;
+    margin-right: auto;
+}
+body #wo_nw_msg_page .msg_under_hood .mobilerightpane .messages-search-users-form .inner-addon .msg_srch_innr svg {
+    left: auto;
+    right: 15px;
+}
+body #wo_nw_msg_page .msg_under_hood .mobilerightpane .messages-search-users-form .inner-addon .msg_srch_innr input {
+    padding: 0 54px 0 15px;
+}
+#wo_nw_msg_page .messages-users-list > h1 {
+    text-align: right;
+}
+body #wo_nw_msg_page .messages-recipients-list .online_dot {
+	left: 4px;
+    right: auto;
+}
+body .mobilerightpane .new-message-alert {
+    right: -7px;
+    left: auto;
+}
+body .messages-recipients-list .msg_rght_prt {
+    margin-left: 0;
+    margin-right: 60px;
+}
+body .text-sender-container .msg_usr_info_top_list .msg_usr_cht_opts_btns > span {
+    margin-right: 0 !important;margin-left: 20px !important;
+}
+body .text-sender-container .msg_usr_info_top_list .msg_usr_cht_opts_btns > span:last-child {
+    margin: 0 !important;
+}
+body .text-sender-container .msg_usr_info_top_list .msg_usr_cht_opts_btns {
+    margin-left: 0;
+    margin-right: auto;
+}
+body .text-sender-container .msg_usr_info_top_list .msg_usr_cht_usr_data img {
+    margin-right: 0;
+    margin-left: 15px;
+}
+body .message-user-image {
+    margin-right: 0;
+    margin-left: 15px;
+}
+body .text-sender-container .incoming .message-model .time {
+    text-align: right;
+}
+body .text-sender-container .incoming .message-model .message {
+    margin-right: 0;
+    margin-left: auto;
+}
+body .text-sender-container .outgoing .message-model .time {
+    text-align: left;
+}
+body .text-sender-container .outgoing .message-model .message {
+    margin-right: auto;
+    margin-left: 0;
+}
+body #wo_msg_right_prt .text-sender-container .sendMessages .input-group .input-group-btn {
+    margin-left: 0;
+    margin-right: 20px;
+}
+body #head_menu_rght .create_head_menu li a svg {
+    margin: auto 0 auto 13px;
+}
+body #wo_msg_right_prt .msg_write_combo .charsLeft-message {
+	right: auto;left: 115px;
 }
 body .all_colors > svg {
     right: auto;left: 0;
@@ -993,6 +680,10 @@ body .all_colors > div {
     right: auto;
 }
 body .thumb-image-delete:not(:last-child) {margin: 0 0 0 5px;}
+body .text-sender-container .msg_usr_info_top_list .mobilemsgclose {
+    margin: -1px -15px 0 15px;transform: rotate(180deg);
+}
+
 
 
 body .wo_com_things_head svg {
@@ -1038,12 +729,272 @@ body .wow_dontd_posts_right {
 }
 body .wow_weather_forecast .fivedays {float: right;}
 
+
+
+body .wo_404_moon {
+    right: 50%;
+    transform: translateX(50%);
+}
+body .ads-navbar-wrapper ul li a {
+	border: 0;
+    border-right: 2px solid white;
+}
+body .ads-navbar-wrapper ul li a svg {
+    margin: -4px 0 0 10px;
+}
+body .wo_page_hdng_innr span {
+    margin-right: 0;margin-left: 8px;
+}
+body .dropdown-menu-right {
+    left: 0;
+    right: auto;
+}
+body .wow_ads_lists > li > div .dropdown-menu li a svg {
+    margin: -2px 0 0 5px;
+}
+body .wow_mini_wallets_btns {
+    margin-left: 0;margin-right: auto;
+}
+body .btn-mat svg {
+    margin: -2px 0 0 3px;
+}
+body .wow_creads_minstp .line .dot.one {left: auto;right: 0%;}
+body .wow_creads_minstp .line .dot.two {left: auto;right: 50%;}
+body .wow_creads_minstp .line .dot.three {left: 0%;right: auto;}
+body .wow_creads_minstp .steps > div.step-one {left: auto;right: 0%;}
+body .wow_creads_minstp .steps > div.step-two {left: auto;right: 50%;}
+body .wow_creads_minstp .steps > div.step-three {left: 0%;right: auto;}
+body .cool-style-album .album_parent .avatar .alb_count {
+    right: auto;
+    left: 10px;
+}
+body .cool-style-album .album_parent .avatar .alb_count svg {
+    margin-right: 0;margin-left: 5px;
+}
+body .wo_page_hdng_menu > .btn {
+    margin-left: 0;margin-right: auto;
+}
+body .wow_read_blog_hdr_img_share {
+    right: auto;
+    left: 30px;
+}
+body .chat-container .online-toggle .chat-status {
+    margin-left: 0;margin-right: auto;
+}
+body .chat-container .chat-status .dropdown-menu li a svg {
+    margin: -2px 0 0 5px;
+}
+body .wow_pops_head .close {
+    right: auto;
+    left: 7px;
+}
+body .wow_chat_list-right {
+    margin-left: 0;margin-right: auto;
+}
+body .recipient-chat-user .chat-loading-icon {
+    right: auto;left: 7px;
+}
+body .chat-opacity {
+	right: auto;left: 0;
+}
+body .chat_main {
+	right: auto;left: 90px;
+}
+body .chat_main:nth-child(2) {
+	right: auto;left: 445px;
+}
+body .chat_main:nth-child(3) {
+	right: auto;left: 800px;
+}
+body .wow_chat_hdr_usr .avatar {
+    margin-right: 0;margin-left: 8px;
+}
+body .events-list-cover .event_cover span {
+    right: auto;
+    left: 15px;
+}
+body .short_start_dt {
+    margin-right: 0;margin-left: 15px;
+}
+body .event_two_blocks div svg {
+    left: auto;
+    right: 8px;
+}
+body .right_user_info li svg {
+    margin: -2px 2px 0 6px;
+}
+body .wo_event_profile .profile-container .card.hovercard .cardheader .profile-cover-changer {
+	top: 5px;
+    left: 5px;
+}
+body .wow_forum_sections table .forum-meta-d.topics {
+    padding-right: 10px !important;
+	padding-left: 20px !important;
+}
+body .wow_forum_sections table .forum-meta-d.posts {
+    padding-right: 10px !important;
+	padding-left: 65px !important;
+}
+body .wow_forum_sections .f_category b {
+    margin-right: 0;
+    margin-left: 20px;
+}
+body .wow_thread_head .forum_title {
+    text-align: right;
+}
+body .wow_thread_main_reply .t-left_prt {
+    float: right;
+    border: 0px;
+	border-left: 1px solid #e5e5e5;
+    margin-right: 0;margin-left: 7px;
+}
+body .wow_thread_replies .thread-replies {
+    padding: 3px 62px 3px 3px;
+}
+body .wow_thread_replies .thread-replies .t-left_prt {
+	margin-right: 0;margin-left: 10px;
+}
+body .wow_thread_replies .thread-replies .t-left_prt .avatar {
+    margin-left: 15px;
+    margin-right: auto;
+}
+body .wow_thread_replies .thread-replies .t-left_prt .avatar .btn {
+    left: auto;right: -60px;
+}
+body .wow_thread_replies .thread-replies .t-right_prt:before {
+    left: auto;right: -13px;transform: rotate(180deg);
+}
+body .wow_forum_jump_btn {
+    margin-left: 0;margin-right: auto;
+}
+body .text-right {
+    text-align: left;
+}
+body .friends_nearby_status_ul li, #search-nearby-users .nearby-users-gender-collapse ul li {
+    margin-right: 0;margin-left: 5px;
+}
+body .wow_pop_gam_list .avatar {
+    margin-right: 0px;margin-left: 10px;
+}
+body .wow_pop_gam_list .game-name, body .wow_pop_gam_list p {
+	margin-left: 0px;margin-right: 70px;
+}
+body .wow_dev_apps .ap_hdr .avatar {
+    margin-right: 0;margin-left: 15px;
+}
+body .wow_main_float_head > .container.wo_go_pro:after {
+	right: auto;left: 0;
+}
+body .wow_hdr_innr_left .nav {
+    margin-left: 0;margin-right: auto;
+}
+body .dropdown-menu:not(.notfi-dropdown):not([role=combobox]) {transform-origin: left top;}
+body .dropdown-menu.toleft {transform-origin: right top !important;}
+body .create_head_menu:before {
+    left: auto;right: 7px;
+}
+body .head_name_links {
+    margin-left: 0;margin-right: 8px;
+}
+body .wow_movie_infos .mve_nfo {
+    padding-left: 0;padding-right: 20px;
+}
+.wo_poke_users .btn {
+    float: left !important;
+}
+body .wo_poke_users .poke_info .avatar {
+	float: right !important;margin-right: 0;margin-left: 9px;
+}
+body .wo_market .market_bottom .product .product_info.wow_main_mkt_prod .product-by {
+    left: auto;
+    right: 8px;
+}
+body .wow_srch_fields > svg, .wow_srch_fields > .dropdown > .btn svg {
+    left: auto;right: 15px;
+}
+body .wow_srch_fields:nth-child(1), body .wow_srch_fields:nth-child(2) {
+	border: 0;
+    border-left: 1px solid #eaeaea;
+}
+body .wow_srch_fields > .dropdown > .btn .caret {
+    margin-left: 0;margin-right: auto;
+}
+body .wow_srch_tabs li:first-child {
+    margin-left: 0;margin-right: auto;
+}
+body .wow_srch_tabs li:last-child {
+    margin-right: 0;margin-left: auto;
+}
+body .wow_frnd_usr .fndfrnd_user_wrapper .user-follow-button {
+    right: auto;
+    left: 10px;
+}
+body .wow_sett_sidebar > ul > li > a svg {
+    margin: auto 0 auto 13px;
+}
+body .wow_side_loggd_usr_hdr .avatar {
+    left: auto;
+    right: 0;
+}
+body .wow_side_bday_usr {
+    padding-left: 0;padding-right: 30px;
+}
+body .wow_side_bday_usr > svg {
+    left: auto;
+    right: 2px;
+}
+body .wow_side_bday_usr > .avatar {
+    margin-right: 0;margin-left: 6px;
+}
+body .invite-user-form button {
+    right: auto;
+    left: 4px;
+}
+body .wow_side_prods_prnt {
+    float: right;
+}
+body .wow_side_acts .notification-user-avatar > span {
+    right: auto;left: 4px;
+}
+body .wow_pub_privacy_dropdown {
+    padding: 0px 10px 0px 6px;
+}
+body .wow_pub_privacy_dropdown > svg {
+    margin-left: 0;margin-right: 3px;
+}
+body .wow_pub_privacy_menu {
+    transform-origin: right top;
+    left: auto;right: 0;
+}
+body .wow_post_usr_ava span {
+    right: auto;
+    left: -4px;
+}
+body .options .total-votes {
+    right: auto;left: 0;
+}
+body .wo_votes .answer-vote {
+    right: auto;left: 0;
+}
+body .options .poll-option > span svg {
+    margin: -2px 0 0px 6px;
+}
+body .wow_post_prod_infos {
+    padding-left: 0;padding-right: 30px;
+}
+body .wow_post_prod_infos > svg {
+    left: auto;right: 0;
+}
+body .earn_points .ep_illus .ep_how_many svg {
+    margin: 0 0 0 15px;
+}
+
 body .comment-reply .wo_commreply_combo .textarea {
-	padding-left: 60px;
+	padding-left: 120px;
     padding-right: 10px;
 }
 body .comment-reply .wo_commreply_combo .image-comment {
-	    left: 13px;
+	left: 13px;
 }
 body .wow_memories_cover, body .wow_memories_posts .wow_memories_cover {
 	padding-left: 5px;padding-right: 230px;background-position: right center;
@@ -1055,27 +1006,49 @@ body .wow_memories_friends h3 svg {
     left: auto;right: 15px;
 }
 body .greetalert .small-texts, body .greetalert p {
-    padding-right: 0px;padding-left: 50px;
+    padding-right: 0px;padding-left: 70px;
 }
 body .greetalert img {
-    right: auto;left: 14px;
+    right: auto;left: 35px;
 }
-body .invite-user-form button {
-    right: auto;left: 4px;
+body .greetalert .close {
+    right: auto;left: 5px;
 }
-body .invite-user-form input {
-    padding: 3px 10px 3px 45px;
+body .invite-user-form button svg {
+	transform: rotate(180deg);
 }
 
+body .navbar-default .dropdown-menu li a svg {
+    margin: -3px 2px 0 15px;
+}
+.wo_blogcomm_combo button svg {
+	transform: scaleX(-1);
+}
+body .greetalert {border-left: 0;border-right: 2.5px solid;}
+body .text-sender-container .outgoing .message-model {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+body .vid_procss_alrt > span {
+    right: auto;
+    left: 10px;
+}
+.chat-messages-wrapper .outgoing .wo_chat_story {
+	margin-left: 0;margin-right: auto;
+}
+#poll-form .publisher-hidden-option.answers > span svg {right: auto;left: 5px;}
 
 
 
 
 
 
-
-
-
+@media (min-width: 768px) {
+.navbar-default .navbar-right:last-child {
+    margin: 0;
+}
+}
 @media (min-width: 992px){
 .col-md-3.sidebar {
     padding-right: 0;
@@ -1097,31 +1070,6 @@ body .invite-user-form input {
 #wo_msg_right_prt .wo_msg_user_dtl .wo_msg_dtl_top .delete-icon {
     margin: 0 auto 0 0 !important;
 }
-body #wo_msg_right_prt .wo_msg_user_dtl .wo_msg_dtl_most_bottom > span svg {
-    margin-right: 0;margin-left: 12px;
-}
-body .message-user-image {
-	margin-right: 0;margin-left: 6px;
-}
-body #wo_msg_right_prt .text-sender-container .message-contnaier.outgoing .message-user-image {
-    margin-right: 6px;
-    margin-left: 0;
-}
-}
-
-@media (min-width: 1420px) {
-body .sun_blog_head {
-    right: 0;left: 240px;
-}
-body .chat_main {
-    right: auto;left: 250px;
-}
-body .chat_main:nth-child(2) {
-    right: auto;left: 515px;
-}
-body .chat_main:nth-child(3) {
-    right: auto;left: 780px;
-}
 }
 
 @media (max-width: 1270px){
@@ -1130,6 +1078,9 @@ body .chat_main:nth-child(3) {
 }
 body .wo_imagecombo_lbox.story_lightbox .story_image_owner {
     margin-right: 350px !important;
+}
+.publisher-box textarea.postText {
+    margin: 0 20px 0 0;
 }
 }
 
@@ -1148,18 +1099,7 @@ body .wo_imagecombo_lbox.story_lightbox .story_image_owner {
 }
 }
 
-@media (max-width: 768px){
-.navbar-nav.left_part_header {
-	float: right;
-}	
-}
-
 @media (max-width: 767px) {
-    .header-brand {
-        right: 10px !important;
-        margin-left: 0px !important;
-        margin-top: -3px;
-    }
     .wo_ads_wallet .my_wallet{
     border-left: 0px;
 }
@@ -1168,36 +1108,19 @@ body .wo_imagecombo_lbox.story_lightbox .story_image_owner {
     border-right: 0px;
 }
 }
-
 @media (max-width: 600px) {
-    .profile-container .card {
-        border-bottom-right-radius: 3px !important;
-    }
+.profile-container .card {
+	border-bottom-right-radius: 3px !important;
 }
-
+body .text-sender-container .msg_usr_info_top_list .msg_usr_cht_opts_btns > span {
+    margin-right: 0 !important;margin-left: 4px !important;
+}
+}
 @media (max-width: 570px){
 .wo_loading_post_child {
     transform: scale(0.9) rotateY(180deg) !important;
 }
 }
-
-@media (max-width: 550px) {
-body .sun_comm_addmore > .dropdown-menu > li.rec {transform: translateY(0px);}
-body .sun_comm_addmore > .dropdown-menu > li.emo {transform: translateY(35px);}
-body .sun_comm_addmore > .dropdown-menu > li.img {transform: translateY(72px);z-index: -1}
-body .sun_post .post {
-    margin-left: 0px;
-    margin-right: 0;
-}
-/*body .sun_post .post .panel {
-    overflow: hidden;
-}*/
-body .post .post-heading .avatar {
-    margin-right: 0;
-    margin-left: 10px;
-}
-}
-
 @media (max-width: 520px){
 .navbar-default li.dropdown.notification-container {
     margin-left: 3px;
@@ -1205,11 +1128,7 @@ body .post .post-heading .avatar {
 .wo_search_page .nav-tabs li a svg.feather {
     margin: auto !important;
 }
-body .navbar-default .dropdown-menu.ani-acc-menu li a svg.mobi_hd_ico {
-    margin: -3px 0px 0 12px;
 }
-}
-
 @media (max-width: 480px){
 .read-blog .blog-author-info .media-body h4 {
     padding-left: 0px;
@@ -1220,7 +1139,6 @@ body .navbar-default .dropdown-menu.ani-acc-menu li a svg.mobi_hd_ico {
 .post .post-footer .comments-list .comment .comment-body .reactions-box {right: -50px;}
 .post .post-footer .comments-list .reply .comment-body .reactions-box { right: -100px;}
 }
-
 @media (max-width: 420px){
 .wo_loading_post_child {
     transform: scale(0.7) rotateY(180deg) !important;
@@ -1229,9 +1147,383 @@ body .navbar-default .dropdown-menu.ani-acc-menu li a svg.mobi_hd_ico {
     margin: -3px -1px 0px 3px !important;
 }
 }
-
 @media (max-width: 345px){
 .post .post-footer .comments-list .reply .comment-body .reactions-box {
     right: -30px;
+}
+}
+
+
+
+
+body .pr_stars .star {margin: 0 0 0 2px;}
+body .reviewMeta--author-avatar { margin-right: 0; margin-left: 10px; }
+
+body .pr_stars .star {margin: 0 0 0 2px;}
+body .reviewMeta--author-avatar { margin-right: 0; margin-left: 10px; }
+body .ch_checkout_title::after {left: auto;right: 0;}
+body .ch_cart .ch_title {padding-left: 0;padding-right: 45px;}
+body .ch_cart .ch_title h4 svg {left: auto;right: 0;}
+body .ch_main_items .prod_img > div {right: auto;left: 7px;}
+body .ch_main_items .prod_img > .btn {left: auto;right: 7px;}
+body .ch_main_items .closed {right: auto;left: 10px;}
+body .ch_total_price > svg {left: auto;right: -25px;transform: scale(-1) scaleX(-1);}
+body .cart_chos_addrs label {padding: 10px 45px 10px 10px;}
+body .cart_chos_addrs label:before {left: auto;right: 10px;}
+body .cart_chos_addrs label:after {left: auto;right: 19px;transform: translate(-50%,-50%);}
+
+body .refs_caret::before {
+    left: auto;
+    right: 0;
+    transform: scale(-1);
+}
+body .referres .ref-image {
+    float: right;
+    margin-right: 0;margin-left: 10px;
+}
+body .refs_caret_down::before {
+    transform: scale(-1) rotate(-90deg);
+}
+body .wo_movie_head_filter > svg {
+    right: auto;left: 10px;
+}
+body .wo_page_profile .page-info-cont .page_navbar .dropdown-menu li svg, body .wo_user_profile .options-buttons .dropdown-menu li svg {margin: -2px 0 auto 10px;}
+
+body .wow_dev_apps .info {margin: 0 98px 0 0;}
+
+body .sun_pub_privacy_menu {
+    transform-origin: right top;left: auto;right: 0;
+}
+body .sun_pub_privacy_dropdown > svg {
+    margin-left: 0;margin-right: 3px;
+}
+body .sun_pub_name {
+    margin: 0 50px 10px 0px;
+}
+body.pub-focus .publisher-box textarea.postText {
+    margin: 0 20px 0 0 !important;
+    padding: 9px 9px 9px 40px !important;
+}
+
+body .explore_hdr .circle_one {
+    left: auto;right: 120px;
+}
+body .explore_hdr .circle_two {
+    right: auto;left: -20px;
+}
+bosy .insta#wo_post_stat_button .stat-item:last-child {
+    margin-left: 0;margin-right: auto;
+}
+body .wo_user_profile.insta .user-bottom-nav {
+    margin: 0 auto 0 20px;
+}
+body .insta_post_filter ul > li:first-child {
+	margin-left: 0;margin-right: auto;
+}
+body .insta_post_filter ul > li:last-child {
+	margin-right: 0;margin-left: auto;
+}
+body .post .post-description .post-actions .stat-item svg{margin-right: 0;margin-left: 2px;}
+
+body .wo_sett_noti .round-check input+label svg {
+    margin: -1px 0 0 5px;
+}
+body .wo_sett_noti .round-check input+label:after, body .wo_sett_noti .round-check input+label:before {
+	left: 14px !important;
+    right: auto !important;
+    position: absolute !important;margin: 16px 0 !important;
+}
+body .wo_sett_noti .round-check input+label:after {
+	right: auto !important;
+	left: 18px !important;
+}
+body .movies-comment-item-body {
+    margin-left: 0;
+    margin-right: 55px;
+}
+body .movies-com-wrapper .movies-comlist-container .movies-comment-item .movies-comment-item-body div.comment-heading {
+    border-radius: 20px 0 20px 20px;
+}
+
+body .wow_usr_steps .upload-image svg {
+    right: auto;left: 10px;
+}
+
+body .wo_settings_page .avatar-holder::after {left: auto;right: 74px;}
+
+body .wow_usr_steps_cont .btn svg {
+	margin: 0 7px 0 0;
+}
+body .movies-com-wrapper .movies-comlist-container .movies-comment-item .movies-comment-item-body div.comment-heading .del-movies-comment {
+	margin-left: 0;margin-right: 10px;
+}
+
+
+body .lang_select_modal .language_info svg {
+    right: auto;left: 0;
+}
+
+body #wo_msg_right_prt .message-option-btns .btn.messages-rtime {padding: 8px 10px 8px 36px !important;}
+
+body .wow_sett_sidebar > ul > li > a span {
+    margin: auto 0 auto 13px;
+}
+
+
+@media (min-width: 992px) {
+body .wo_new_sett_sidee {
+	padding-left: 15px;padding-right: 15px;
+}
+body .wo_new_sett_pagee {
+	padding-left: 15px;padding-right: 0;
+}
+}
+
+@media (max-width: 1320px) {
+body .search-container .search-input {
+    width: 300px;
+}
+}
+
+
+
+body .dropdown-menu.create_head_menu.fulls > svg {
+    right: auto;
+    left: 0;
+}
+body .chat_empty_user .item .avatar {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
+body .messages-list .notification-text {
+    margin-left: 0;
+    margin-right: 62px;
+}
+body .navbar-default .user-menu-combination b {
+    margin-left: 0 !important;
+    margin-right: 10px;
+}
+body .wow_hdr_menu_usr_lnk img {
+    margin: -2px 0 0 12px;
+}
+body .navbar-default .dropdown-menu.ani-acc-menu > li > a > svg {
+    margin: -3px 0 0 12px;
+}
+body .wow_my_groups .avatar {
+    margin-right: 0;
+    margin-left: 10px;
+}
+body .sun_pub_mid_foot .poster-left-buttons {
+    margin-right: 0;
+    margin-left: 7px;
+}
+body .sun_pub_mid_foot .poster-left-buttons .btn svg {
+    margin-right: 0;
+    margin-left: 1px;
+}
+body .post .post-heading .avatar {
+    margin-right: 0;
+    margin-left: 15px;
+}
+body .wo_post_fetch_event .short_start_dt {
+    right: auto;
+    left: 15px;
+}
+body .post .wo_shared_doc_file > a > i {
+    margin: 0 0 0 20px;
+}
+body .post .wo_shared_doc_file > a:after {
+    margin-left: 0;
+    margin-right: auto;
+}
+body .container .wo_user_profile .card.hovercard .options-buttons {
+    margin-left: 0;
+    margin-right: auto;
+    right: auto;
+    left: 10px;
+}
+body .wo_user_profile .user-bottom-nav li a .split-link svg {
+    margin: -3px 0 0 2px;
+}
+body .profile_search.wow_form_fields > svg {
+    right: auto;
+    left: 0;
+}
+body .popular_posts_hdr > h2 svg {
+    right: auto;
+    left: 0;
+}
+body .wow_form_fields .input-group-addon+input {
+    border-radius: 9px 0 0 9px;
+}
+body .wow_form_fields .input-group-addon {
+    border-radius: 0 9px 9px 0;
+}
+
+@media (min-width: 992px) {
+body .wo_post_prod_full_img_slider {
+    transform: rotate(270deg) translate(0px, -100%);
+    transform-origin: right top;
+}
+}
+
+body .wow_big_head_link .right_part .search-blog form svg, body .popular_posts_hdr.find_frnds .search-blog form svg {
+    right: auto;
+    left: 0;
+}
+body .wow_big_head_link .right_part .search-blog {
+    margin-right: 0;
+    margin-left: 15px;
+}
+body .wow_forum_sections .forum-meta-d.topics > div span {
+    border-right: 0;
+    border-left-width: 1px;
+}
+body .wow_forum_sections .forum-meta-d.small .avatar img {
+    float: right;
+    margin-right: 0;
+    margin-left: 10px;
+}
+body #wo_nw_msg_page .msg_under_hood .mobilerightpane .messages-search-users-form .inner-addon .btn_contr {
+    margin-left: 0;
+    margin-right: 15px;
+}
+body #wo_nw_msg_page .messages-recipients-list .avatar {
+    margin-right: 0;margin-left: 15px;
+}
+body .wo_user_profile .btn-glossy a svg.feather, body .wo_user_profile .btn-glossy button svg.feather {
+    margin: -2px 0 0 3px;
+}
+body .fake_ad_post .fcov_title svg {
+    left: auto;
+    right: 0;
+}
+body .fake_ad_post .fcov_title div {
+    padding-left: 0;
+    padding-right: 30px;
+}
+body .fake_ad_post .fads_meta .fads_avatar {
+    margin-right: 0;
+    margin-left: 10px;
+    float: right;
+}
+body .active_sessions .as_list .session_info p svg {
+    margin: -2px 0 0 3px;
+}
+body .wow_creads_minstp.start_up .line .dot.one, body .wow_creads_minstp.start_up .steps > div.step-one {
+    left: auto;
+    right: 0;
+}
+body .wow_creads_minstp.start_up .line .dot.two {
+	transform: translate(50%, -50%);
+}
+body .wow_creads_minstp.start_up .line .dot.three, body .wow_creads_minstp.start_up .steps > div.step-three {
+    right: auto;
+    left: 0;
+}
+body .wow_creads_minstp.start_up .steps > div.step-two {
+	transform: translate(50%);
+}
+body .wo_imagecombo_lbox .lightbox-post-footer .post-commet-textarea img {
+    margin-right: 0;
+    margin-left: 12px;
+}
+body .wo_imagecombo_lbox .lightbox-post-footer .comment-textarea {
+    text-align: end;
+}
+body .wo_imagecombo_lbox .lightbox-post-footer .emo-comment {
+    left: 33px !important;
+    right: auto !important;
+}
+body .wo_com_lbox_slide_innr .upop_mid_innr .user-information li svg {
+    margin: -2px 2px 0 6px;
+}
+body .side_slide_menu {
+    margin-right: 0;margin-left: 15px;
+}
+
+
+
+@media (max-width:992px) {
+body .wo_new_left_side {
+    left: auto;
+    right: 0;transform: translateX(100%);
+}
+}
+
+body .chat-container .wow_chat_search .dropdown-menu {
+    right: auto;left: 100%;
+}
+body .load-more .btn:before {
+    margin: -2px 0 0 7px;
+}
+
+
+body .recipient-chat-user .user-info > svg {
+    right: auto;
+    left: 0;
+}
+body .wow_htag a svg {
+    margin-right: 0;
+    margin-left: 10px;
+}
+body .wo_sidebar_pages .page_middle .thumb {
+    margin-right: 0;
+    margin-left: 10px;
+}
+body .wo_imagecombo_lbox .story-img .sun_light_tool .lbox_topbar_child.white {
+    border-radius: 16px 0;flex-direction: row-reverse;
+}
+
+body .new-update-alert{
+    right: auto;left: 5px;
+}
+@media (min-width: 1350px) {
+.wow_big_head_link .right_part .dropdown .dropdown-menu.jobss {
+    left: auto;
+    right: -448px;
+}
+}
+
+body .new-feature{
+    right: auto;
+    left: 0;
+}
+body .ai_alert_img {
+    left: auto;
+	right: 0;
+}
+
+body .ai_alert_images label span.ai_image_abs:before {
+    right: auto;
+    left: 8px;
+}
+body .ai_alert_images label span.ai_image_abs:after {
+    right: auto;
+    left: 12px;
+}
+
+body .ai_alert_images label {
+    right: auto;
+    left: 0;
+}
+
+body .wo_reels_cont .story-img .reels-previous-btn, body .wo_reels_cont .story-img .reels-next-btn {
+    left: 40px;
+    right: auto;
+}
+
+body .btn-delete-reel {
+    right: auto;left: -70px;
+}
+
+
+@media (max-width:800px) {
+body .wo_reels_cont .video-text-overlay, body .btn-delete-reel {
+    right: auto;left: 10px;
+}
+body .video-post-text-overlay {
+    padding-right: 15px;padding-left: 70px;
 }
 }
